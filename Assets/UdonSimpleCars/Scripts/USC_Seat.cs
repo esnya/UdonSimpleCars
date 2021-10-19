@@ -14,6 +14,7 @@ namespace UdonSimpleCars
     {
         [Popup("GetButtonList")] public string getOutButton = "Oculus_CrossPlatform_Button4";
         public KeyCode getOutKey = KeyCode.Return;
+        public bool isDriver = true;
 
         private USC_Car car;
         private VRCStation station;
@@ -38,12 +39,15 @@ namespace UdonSimpleCars
 
         public override void OnStationEntered(VRCPlayerApi player)
         {
-            if (player.isLocal) car._GetIn();
+            if (player.isLocal) {
+                if (isDriver) car._OnEnteredAsDriver();
+                else car._OnEnteredAsPassenger();
+            }
         }
 
         public override void OnStationExited(VRCPlayerApi player)
         {
-            if (player.isLocal) car._GetOut();
+            if (player.isLocal) car._OnExited();
         }
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
