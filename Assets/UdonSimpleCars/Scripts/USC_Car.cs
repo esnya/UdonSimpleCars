@@ -66,7 +66,7 @@ namespace UdonSimpleCars
             set
             {
                 _isDrived = value;
-                SetBrake(value ? 0.0f : 1.0f);
+                // SetBrake(value ? 0.0f : 1.0f);
                 if (engineSound != null) engineSound.gameObject.SetActive(value);
                 if (animator != null) animator.SetBool(isDrivedParameter, value);
             }

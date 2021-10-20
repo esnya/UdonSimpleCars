@@ -11,22 +11,25 @@ namespace UdonSimpleCars
         DefaultExecutionOrder(100), // After Engine Controller
         UdonBehaviourSyncMode(/*BehaviourSyncMode.None*/ BehaviourSyncMode.NoVariableSync),
         RequireComponent(typeof(Rigidbody)),
+        RequireComponent(typeof(SphereCollider))
     ]
     public class USC_TugJoint : UdonSharpBehaviour
     {
-        public GameObject ownerDetector;
+        public LayerMask anchorLayers = -1;
         public ConfigurableJoint joint;
         public AudioSource audioSource;
         public AudioClip onConnected, onDisconnected;
         [HideInInspector] public Rigidbody vehicleRigidbody;
         private bool initialized = false;
 
-        private USC_TugJoint _connectedTarget;
-        private USC_TugJoint ConnectedTarget
+        private Vector3 center;
+        private float radius;
+        private USC_TugAnchor _connectedAnchor;
+        private USC_TugAnchor ConnectedAnchor
         {
             set
             {
-                _connectedTarget = value;
+                _connectedAnchor = value;
 
                 if (joint != null)
                 {
@@ -34,47 +37,53 @@ namespace UdonSimpleCars
                     {
                         joint.gameObject.SetActive(false);
                         joint.connectedBody = null;
-                        if (initialized) SendCustomNetworkEvent(NetworkEventTarget.All, nameof(OnDisconnected));
                     }
                     else
                     {
                         joint.connectedBody = value.vehicleRigidbody;
                         joint.gameObject.SetActive(true);
                         value.vehicleRigidbody.WakeUp();
-                        if (initialized) SendCustomNetworkEvent(NetworkEventTarget.All, nameof(OnConnected));
                     }
                 }
-
             }
-            get => _connectedTarget;
+            get => _connectedAnchor;
         }
         private void Start()
         {
             vehicleRigidbody = transform.parent.GetComponentInParent<Rigidbody>();
-            ConnectedTarget = null;
+            ConnectedAnchor = null;
             DisableInteractive = joint == null;
+            center = GetComponent<SphereCollider>().center;
+            radius = GetComponent<SphereCollider>().radius;
             initialized = true;
         }
 
         private void Update()
         {
-            if (ConnectedTarget == null) return;
-            if (!ConnectedTarget._IsOwner()) ConnectedTarget = null;
+            if (ConnectedAnchor == null) return;
+            if (!ConnectedAnchor._Connectable()) ConnectedAnchor = null;
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (ConnectedTarget != null || joint == null || other == null) return;
+            if (ConnectedAnchor != null || joint == null) return;
 
-            var otherJoint = other.GetComponent<USC_TugJoint>();
-            if (otherJoint == null || !otherJoint._IsOwner()) return;
+            var anchor = FindAnchor();
+            if (anchor == null || !anchor._Connectable()) return;
 
-            ConnectedTarget = otherJoint;
+            _Connect(anchor);
+        }
+
+        public void _Connect(USC_TugAnchor anchor)
+        {
+            ConnectedAnchor = anchor;
+            SendCustomNetworkEvent(NetworkEventTarget.All, nameof(OnConnected));
         }
 
         public void Disconnect()
         {
-            ConnectedTarget = null;
+            ConnectedAnchor = null;
+            OnDisconnected();
         }
 
         public override void Interact()
@@ -91,10 +100,18 @@ namespace UdonSimpleCars
             audioSource.PlayOneShot(clip);
         }
 
-        public bool _IsOwner()
+        private USC_TugAnchor FindAnchor()
         {
-            if (ownerDetector == null) return false;
-            return Networking.IsOwner(ownerDetector.gameObject);
+            var colliders = Physics.OverlapSphere(transform.TransformPoint(center), radius, anchorLayers, QueryTriggerInteraction.Collide);
+
+            foreach (var collider in colliders)
+            {
+                if (collider == null) continue;
+                var anchor = collider.GetComponent<USC_TugAnchor>();
+                if (anchor != null) return anchor;
+            }
+
+            return null;
         }
     }
 }
