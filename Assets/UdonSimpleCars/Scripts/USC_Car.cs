@@ -1,12 +1,13 @@
-﻿
-using System.Net.NetworkInformation;
-using System.Runtime.CompilerServices;
-using UdonSharp;
+﻿using UdonSharp;
 using UdonToolkit;
 using UnityEngine;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
 using VRC.Udon;
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+using UdonSharpEditor;
+using UnityEditor;
+#endif
 
 namespace UdonSimpleCars
 {
@@ -46,6 +47,9 @@ namespace UdonSimpleCars
         [Tooltip("Float")] public string brakeParameter = "Brake";
         [Tooltip("Float")] public string steeringParameter = "Steering";
         [Tooltip("Bool")] public string backGearParameter = "BackGear";
+
+        [SectionHeader("Editor")]
+        public GameObject respawnerPrefab;
 
         private Animator animator;
         private new Rigidbody rigidbody;
@@ -207,6 +211,21 @@ namespace UdonSimpleCars
             }
         }
 
+        public void _Respawn()
+        {
+            if (IsDrived) return;
+
+            Networking.SetOwner(Networking.LocalPlayer, gameObject);
+
+            var objectSync = (VRCObjectSync)GetComponent(typeof(VRCObjectSync));
+            objectSync.Respawn();
+
+            backGear = false;
+            accelerationValue = 0;
+            steeringValue = 0;
+            brakeValue = 0;
+        }
+
         private void SetBrake(float value)
         {
             for (var i = 0; i < wheelCount; i++)
@@ -249,6 +268,23 @@ namespace UdonSimpleCars
             "Oculus_CrossPlatform_Button4",
             "Oculus_CrossPlatform_Button2",
         };
+
+
+        [Button("Add Respawner", true)]
+        public void AddRespawner()
+        {
+            var respawner = Instantiate(respawnerPrefab);
+            respawner.transform.parent = transform.parent;
+            respawner.transform.position = transform.TransformPoint(respawnerPrefab.transform.localPosition);
+
+            respawner.name = respawner.name.Replace("(Clone)", $"({gameObject.name})");
+
+            var respawnerUdon = respawner.GetUdonSharpComponent<USC_Respawner>();
+            respawnerUdon.target = this;
+            respawnerUdon.ApplyProxyModifications();
+
+            Undo.RegisterCreatedObjectUndo(respawner, "Add Respawner");
+        }
 #endif
     }
 }

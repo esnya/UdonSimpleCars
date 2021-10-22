@@ -3,7 +3,10 @@ guid: a5330b2d37837a9499729c4b3d4cdc63
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - engineSound: {instanceID: 0}
+  - respawnerPrefab: {fileID: 6935105098761842275, guid: 341d055a74aedb045bd1136b6eb87bd5,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
