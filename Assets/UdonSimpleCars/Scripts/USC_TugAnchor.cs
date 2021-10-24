@@ -32,7 +32,11 @@ namespace UdonSimpleCars
 
         public void _WakeUp()
         {
-            vehicleRigidbody.WakeUp();
+            foreach (var rigidbody in vehicleRigidbody.GetComponentsInChildren<Rigidbody>())
+            {
+                if (rigidbody == null) continue;
+                rigidbody.WakeUp();
+            }
         }
     }
 }

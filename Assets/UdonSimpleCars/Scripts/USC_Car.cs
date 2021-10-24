@@ -106,6 +106,8 @@ namespace UdonSimpleCars
                 );
 
                 wheelLocalRotations[i] = wheel.transform.localRotation;
+
+                if (wheel.attachedRigidbody != rigidbody) wheels[i] = null;
             }
 
             _isDrived = false;
@@ -142,6 +144,7 @@ namespace UdonSimpleCars
             for (var i = 0; i < wheelCount; i++)
             {
                 var wheel = wheels[i];
+                if (wheel == null) continue;
                 var wheelPosition = wheelPositions[i];
 
                 wheel.motorTorque = accelerationValue * accelerationTorque / wheelCount;
@@ -182,8 +185,9 @@ namespace UdonSimpleCars
                 var wheelTransform = wheelTransforms[i];
                 var wheelLocalRotation = wheelLocalRotations[i];
                 var wheel = wheels[i];
+                if (wheel == null) continue;
 
-                wheelAngles[i] = (wheelAngles[i] + (localIsDriver ? wheel.rpm : wheelsRPM) * Time.deltaTime * 360.0f / 60.0f) % 360.0f;
+                wheelAngles[i] = (wheelAngles[i] + (localIsDriver ? wheel.rpm : wheelsRPM) * 60.0f * Time.deltaTime * 360.0f) % 360.0f;
                 var wheelRotation = Quaternion.AngleAxis(wheelAngles[i], Vector3.right);
                 wheelTransform.localRotation = (wheelPosition.y > 0 ? (Quaternion.AngleAxis(steeringValue * maxSteeringAngle, Vector3.up) * wheelRotation) : wheelRotation) * wheelLocalRotation;
             }
@@ -208,6 +212,8 @@ namespace UdonSimpleCars
             {
                 localIsDriver = false;
                 IsDrived = false;
+
+                accelerationValue = 0;
             }
         }
 
@@ -230,7 +236,9 @@ namespace UdonSimpleCars
         {
             for (var i = 0; i < wheelCount; i++)
             {
-                wheels[i].brakeTorque = value * brakeTorque / wheelCount;
+                var wheel = wheels[i];
+                if (wheel == null) continue;
+                wheel.brakeTorque = value * brakeTorque / wheelCount;
             }
         }
 
