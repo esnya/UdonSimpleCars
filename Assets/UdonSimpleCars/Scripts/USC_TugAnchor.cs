@@ -25,9 +25,14 @@ namespace UdonSimpleCars
             if (vehicleRigidbody == null) vehicleRigidbody = GetComponentInParent<Rigidbody>();
         }
 
-        public bool _Connectable()
+        public bool _IsConnectable()
         {
             return Networking.IsOwner(ownerDetector) && !vehicleRigidbody.isKinematic;
+        }
+
+        public void _WakeUp()
+        {
+            vehicleRigidbody.WakeUp();
         }
     }
 }
