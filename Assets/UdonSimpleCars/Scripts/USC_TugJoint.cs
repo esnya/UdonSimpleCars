@@ -19,9 +19,9 @@ namespace UdonSimpleCars
     {
         [SectionHeader("Anchor")]
         public LayerMask anchorLayers = -1;
-        public float spring = 10000.0f;
-        public float damping = 10000.0f;
-        public float maxAcceleration = 10000.0f;
+        public float spring = 500.0f;
+        public float damping = 50000.0f;
+        public float maxAcceleration = 2000.0f;
 
         [SectionHeader("Sounds")]
         public AudioSource audioSource;
@@ -69,10 +69,10 @@ namespace UdonSimpleCars
                 if (ConnectedAnchor._IsConnectable())
                 {
                     var connectedAnchorPositon = _connectedAnchor.transform.position;
-                    var relativePosition = transform.position - connectedAnchorPositon;
+                    var relativePosition = -transform.InverseTransformPoint(connectedAnchorPositon);
                     force = relativePosition * spring + (relativePosition - prevRelativePosition) * damping;
                     prevRelativePosition = relativePosition;
-                    ConnectedAnchor.vehicleRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(force, maxAcceleration) * Time.fixedDeltaTime, connectedAnchorPositon, ForceMode.Acceleration);
+                    ConnectedAnchor.vehicleRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(transform.TransformVector(force), maxAcceleration) * Time.fixedDeltaTime, connectedAnchorPositon, ForceMode.Acceleration);
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace UdonSimpleCars
 
             if (Networking.IsOwner(vehicleRoot))
             {
-                parentRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(-force, maxAcceleration) * Time.fixedDeltaTime, transform.position, ForceMode.Acceleration);
+                parentRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(-transform.TransformVector(force), maxAcceleration) * Time.fixedDeltaTime, transform.position, ForceMode.Acceleration);
             }
         }
 
