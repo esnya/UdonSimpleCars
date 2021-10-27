@@ -1,0 +1,233 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dba914234891ddd458239d9a948eaa9a, type: 3}
+  m_Name: Prefab Udon Variables
+  m_EditorClassIdentifier: 
+  udonVariables:
+  - prefabInstance: {fileID: 8154255029462950915, guid: 06526237862500e42bc60720a296c08c,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/DriverSeat.prefab
+    udonVariables:
+    - udonInstance: {fileID: 8154255029462950913, guid: 06526237862500e42bc60720a296c08c,
+        type: 3}
+      gameObjectName: DriverSeat
+      variables:
+      - symbolName: getOutButton
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_Button4
+      - symbolName: getOutKey
+        objectReference: {fileID: 0}
+        value: Return
+      - symbolName: isDriver
+        objectReference: {fileID: 0}
+        value: True
+  - prefabInstance: {fileID: 867768652620275319, guid: b83f5e71b839ccb42854100226e29fe4,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/PassengerSeat
+      (L).prefab
+    udonVariables:
+    - udonInstance: {fileID: 1746256873730171143, guid: b83f5e71b839ccb42854100226e29fe4,
+        type: 3}
+      gameObjectName: PassengerSeat (L)
+      variables:
+      - symbolName: getOutButton
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_Button4
+      - symbolName: getOutKey
+        objectReference: {fileID: 0}
+        value: Return
+      - symbolName: isDriver
+        objectReference: {fileID: 0}
+        value: False
+  - prefabInstance: {fileID: 5269387084042503976, guid: 3abb4122a0be6fb479033738f2932fa2,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/PassengerSeat
+      (R).prefab
+    udonVariables:
+    - udonInstance: {fileID: 6706284258715072600, guid: 3abb4122a0be6fb479033738f2932fa2,
+        type: 3}
+      gameObjectName: PassengerSeat (R)
+      variables:
+      - symbolName: getOutButton
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_Button4
+      - symbolName: getOutKey
+        objectReference: {fileID: 0}
+        value: Return
+      - symbolName: isDriver
+        objectReference: {fileID: 0}
+        value: False
+  - prefabInstance: {fileID: 5058475754793921641, guid: 6fd3734afb303ec40a8d2f652c61da6d,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/TowingAnchor.prefab
+    udonVariables:
+    - udonInstance: {fileID: 3318770050843764781, guid: 6fd3734afb303ec40a8d2f652c61da6d,
+        type: 3}
+      gameObjectName: TowingAnchor
+      variables:
+      - symbolName: vehicleRigidbody
+        objectReference: {fileID: 0}
+        value: null
+  - prefabInstance: {fileID: 1300906920318284338, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/TowingJoint.prefab
+    udonVariables:
+    - udonInstance: {fileID: 1300906920318284296, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
+        type: 3}
+      gameObjectName: TowingJoint
+      variables:
+      - symbolName: anchorLayers
+        objectReference: {fileID: 0}
+        value: UnityEngine.LayerMask
+      - symbolName: audioSource
+        objectReference: {fileID: 1300906920318284342, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
+          type: 3}
+        value: TowingJoint (UnityEngine.AudioSource)
+      - symbolName: damping
+        objectReference: {fileID: 0}
+        value: 100000
+      - symbolName: maxAcceleration
+        objectReference: {fileID: 0}
+        value: 2000
+      - symbolName: onConnected
+        objectReference: {fileID: 8300000, guid: 64ca17c1188412347901cf9e24b1ed13,
+          type: 3}
+        value: CatapultLock (UnityEngine.AudioClip)
+      - symbolName: onDisconnected
+        objectReference: {fileID: 8300000, guid: 16f6f99eac353cd488cd2e3fbd945510,
+          type: 3}
+        value: Reloading (UnityEngine.AudioClip)
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 500
+  - prefabInstance: {fileID: 8311205895600088585, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/SampleAssets/UdonSimpleCar.prefab
+    udonVariables:
+    - udonInstance: {fileID: 8311205895994316244, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+        type: 3}
+      gameObjectName: DriverSeat
+      variables:
+      - symbolName: getOutButton
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_Button4
+      - symbolName: getOutKey
+        objectReference: {fileID: 0}
+        value: Return
+    - udonInstance: {fileID: 8311205895600088590, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+        type: 3}
+      gameObjectName: UdonSimpleCar
+      variables:
+      - symbolName: accelerationAxis
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_SecondaryIndexTrigger
+      - symbolName: accelerationKey
+        objectReference: {fileID: 0}
+        value: LeftShift
+      - symbolName: accelerationParameter
+        objectReference: {fileID: 0}
+        value: Acceleration
+      - symbolName: accelerationResponse
+        objectReference: {fileID: 0}
+        value: 1
+      - symbolName: accelerationTorque
+        objectReference: {fileID: 0}
+        value: 300
+      - symbolName: backAccelerationKey
+        objectReference: {fileID: 0}
+        value: LeftControl
+      - symbolName: backGearAxis
+        objectReference: {fileID: 0}
+        value: Vertical
+      - symbolName: backGearParameter
+        objectReference: {fileID: 0}
+        value: BackGear
+      - symbolName: brakeAxis
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_PrimaryIndexTrigger
+      - symbolName: brakeKey
+        objectReference: {fileID: 0}
+        value: B
+      - symbolName: brakeParameter
+        objectReference: {fileID: 0}
+        value: Brake
+      - symbolName: brakeResponse
+        objectReference: {fileID: 0}
+        value: 1
+      - symbolName: brakeTorque
+        objectReference: {fileID: 0}
+        value: 1000
+      - symbolName: brakeWheels
+        objectReference: {fileID: 0}
+        value: UnityEngine.WheelCollider[]
+      - symbolName: drivingWheels
+        objectReference: {fileID: 0}
+        value: UnityEngine.WheelCollider[]
+      - symbolName: engineSound
+        objectReference: {fileID: 8311205894919746665, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+          type: 3}
+        value: EngineSound (UnityEngine.AudioSource)
+      - symbolName: engineSoundPitch
+        objectReference: {fileID: 0}
+        value: UnityEngine.AnimationCurve
+      - symbolName: engineSoundVolume
+        objectReference: {fileID: 0}
+        value: UnityEngine.AnimationCurve
+      - symbolName: isDrivedParameter
+        objectReference: {fileID: 0}
+        value: IsDrived
+      - symbolName: isOperatingParameter
+        objectReference: {fileID: 0}
+        value: IsOperating
+      - symbolName: maxSteeringAngle
+        objectReference: {fileID: 0}
+        value: 20
+      - symbolName: respawnerPrefab
+        objectReference: {fileID: 6935105098761842275, guid: 341d055a74aedb045bd1136b6eb87bd5,
+          type: 3}
+        value: Respawner (UnityEngine.GameObject)
+      - symbolName: steeredWheels
+        objectReference: {fileID: 0}
+        value: UnityEngine.WheelCollider[]
+      - symbolName: steeringAxis
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_SecondaryThumbstickHorizontal
+      - symbolName: steeringKeyLeft
+        objectReference: {fileID: 0}
+        value: A
+      - symbolName: steeringKeyRight
+        objectReference: {fileID: 0}
+        value: D
+      - symbolName: steeringParameter
+        objectReference: {fileID: 0}
+        value: Steering
+      - symbolName: steeringResponse
+        objectReference: {fileID: 0}
+        value: 1
+      - symbolName: steeringWheelAxis
+        objectReference: {fileID: 0}
+        value: (0.0, 0.0, 1.0)
+      - symbolName: steeringWheels
+        objectReference: {fileID: 0}
+        value: UnityEngine.WheelCollider[]
+      - symbolName: steeringWheelTransforms
+        objectReference: {fileID: 0}
+        value: UnityEngine.Transform[]
+      - symbolName: wheels
+        objectReference: {fileID: 0}
+        value: UnityEngine.WheelCollider[]
+      - symbolName: wheelTransforms
+        objectReference: {fileID: 0}
+        value: UnityEngine.Transform[]
+      - symbolName: wheelVisuals
+        objectReference: {fileID: 0}
+        value: UnityEngine.Transform[]
