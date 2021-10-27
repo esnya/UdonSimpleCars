@@ -54,8 +54,7 @@ namespace UdonSimpleCars
                 return;
             }
 
-            car.wheels = car.GetComponentsInChildren<USC_Wheel>().Select(w => w.GetComponent<WheelCollider>()).ToArray();
-
+            var wheels = car.GetComponentsInChildren<USC_Wheel>().Select(w => w.GetComponent<WheelCollider>()).ToArray();
             var wheelCollider = wheel.GetComponent<WheelCollider>();
 
             using (var change = new EditorGUI.ChangeCheckScope())
@@ -65,10 +64,11 @@ namespace UdonSimpleCars
                 WheelCapabilityField(ref car.brakeWheels, "Brake", wheelCollider);
                 // WheelCapabilityField(ref car.parkingBrakeWheels, "Parking Brake", wheelCollider);
 
-                WheelObjectField(ref car.wheelVisuals, "Visual Transform", car.wheels, wheelCollider, true);
+                WheelObjectField(ref car.wheelVisuals, "Visual Transform", wheels, wheelCollider, true);
 
                 if (change.changed)
                 {
+                    car.wheels = wheels;
                     car.ApplyProxyModifications();
                     EditorUtility.SetDirty(UdonSharpEditorUtility.GetBackingUdonBehaviour(car));
                 }
