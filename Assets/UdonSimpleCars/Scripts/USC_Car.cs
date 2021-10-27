@@ -1,9 +1,12 @@
-﻿using UdonSharp;
+﻿#pragma warning disable IDE1006
+
+using UdonSharp;
 using UdonToolkit;
 using UnityEngine;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
-using VRC.Udon;
+using System.Threading;
+
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UdonSharpEditor;
 using UnityEditor;
@@ -21,12 +24,17 @@ namespace UdonSimpleCars
         [Range(0, 10)] public float accelerationResponse = 1f;
         public float brakeTorque = 1.0f;
         [Range(0, 10)] public float brakeResponse = 1f;
-        public float maxSteeringAngle = 20.0f;
+        public float maxSteeringAngle = 40.0f;
         [Range(0, 10)] public float steeringResponse = 1f;
 
         [SectionHeader("Sounds")]
         public AudioSource engineSound;
         public AnimationCurve engineSoundPitch = AnimationCurve.Linear(0, 1.0f, 1, 1.5f), engineSoundVolume = AnimationCurve.Linear(0, 0.8f, 1, 1.0f);
+
+        [SectionHeader("Others")]
+        public Transform steeringWheel;
+        public Vector3 steeringWheelAxis = Vector3.forward;
+
 
         [SectionHeader("VR Inputs")]
         [Popup("GetAxisList")] public string steeringAxis = "Oculus_CrossPlatform_SecondaryThumbstickHorizontal";
@@ -42,75 +50,157 @@ namespace UdonSimpleCars
         public KeyCode brakeKey = KeyCode.B;
 
         [SectionHeader("Animator Parameterss")]
-        [Tooltip("Bool")] public string isDrivedParameter = "IsDrived";
+        [Tooltip("Bool")] public string isOperatingParameter = "IsOperating";
         [Tooltip("Float")] public string accelerationParameter = "Acceleration";
         [Tooltip("Float")] public string brakeParameter = "Brake";
         [Tooltip("Float")] public string steeringParameter = "Steering";
+        [Tooltip("Integer")] public string gearParameter = "Gear";
         [Tooltip("Bool")] public string backGearParameter = "BackGear";
 
         [SectionHeader("Editor")]
         public GameObject respawnerPrefab;
 
-        private Animator animator;
-        private new Rigidbody rigidbody;
-        private int wheelCount;
-        private WheelCollider[] wheels;
-        private Vector2[] wheelPositions;
-        private Quaternion[] wheelLocalRotations;
-        private Transform[] wheelTransforms;
-        private float[] wheelAngles;
-        private bool localIsDriver;
-        private bool backGear = false;
-        [UdonSynced(UdonSyncMode.Smooth)] private float wheelsRPM;
+        [SectionHeader("Wheels")]
+        [HelpBox("Managed by USC_Wheel(s)")]
+        public WheelCollider[] wheels = {};
+        public WheelCollider[] steeredWheels = {};
+        public WheelCollider[] drivingWheels = {};
+        public WheelCollider[] brakeWheels = {};
+        // public WheelCollider[] parkingBrakeWheels = {};
+        public Transform[] wheelVisuals = {};
+        public Transform[] steeringWheelTransforms;
 
-        [UdonSynced(UdonSyncMode.Smooth)] private float accelerationValue, brakeValue, steeringValue;
-        [UdonSynced, FieldChangeCallback(nameof(IsDrived))] private bool _isDrived;
-        private bool IsDrived
+        private Animator animator;
+        private int wheelCount;
+        private Quaternion[] wheelVisualRotationOffsets;
+        private Vector3[] wheelVisualPositionOffsets;
+        private bool localIsDriver;
+        private Quaternion steeringWheelLocalRotation;
+
+        [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(AccelerationValue))] private float _accelerationValue;
+        private float AccelerationValue {
+            set {
+                if (value == _accelerationValue) return;
+                _accelerationValue = value;
+
+                if (IsOperating)
+                {
+                    var absoluteValue = Mathf.Abs(value);
+                    if (engineSound != null)
+                    {
+                        engineSound.pitch = engineSoundPitch.Evaluate(absoluteValue);
+                        engineSound.volume = engineSoundVolume.Evaluate(absoluteValue);
+                    }
+
+                    if (animator != null)
+                    {
+                        animator.SetFloat(accelerationParameter, absoluteValue);
+                    }
+                }
+
+                if (localIsDriver)
+                {
+                    foreach (var wheel in drivingWheels) wheel.motorTorque = value * accelerationTorque / drivingWheels.Length;
+                }
+            }
+            get => _accelerationValue;
+        }
+        [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(BrakeValue))] private float _brakeValue;
+        private float BrakeValue {
+            set {
+                if (value == _brakeValue) return;
+                _brakeValue = value;
+
+                if (animator != null && IsOperating)
+                {
+                    animator.SetFloat(brakeParameter, value);
+                }
+
+
+                if (localIsDriver)
+                {
+                     foreach (var wheel in brakeWheels) wheel.brakeTorque = value * brakeTorque / brakeWheels.Length;
+                }
+            }
+            get => _brakeValue;
+        }
+        [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(SteeringValue))] private float _steeringValue;
+        private float SteeringValue {
+            set {
+                if (value == _steeringValue) return;
+                _steeringValue = value;
+
+
+                if (animator != null && IsOperating)
+                {
+                    animator.SetFloat(steeringParameter, value * 0.5f + 0.5f);
+                }
+
+                if (localIsDriver)
+                {
+                    foreach (var wheel in steeredWheels) wheel.steerAngle = value * maxSteeringAngle/ steeredWheels.Length;
+                }
+            }
+            get => _steeringValue;
+        }
+        [UdonSynced, FieldChangeCallback(nameof(IsOperating))] private bool _isOperating;
+        private bool IsOperating
         {
             set
             {
-                _isDrived = value;
-                // SetBrake(value ? 0.0f : 1.0f);
+                _isOperating = value;
                 if (engineSound != null) engineSound.gameObject.SetActive(value);
-                if (animator != null) animator.SetBool(isDrivedParameter, value);
+                if (animator != null) animator.SetBool(isOperatingParameter, value);
             }
-            get => _isDrived;
+            get => _isOperating;
+        }
+
+        const int GEAR_PARKING = -2;
+        const int GEAR_BACK = -1;
+        const int GEAR_NEUTRAL = 0;
+        const int GEAR_DRIVE = 1;
+        [UdonSynced, FieldChangeCallback(nameof(Gear))] private int _gear = GEAR_DRIVE;
+        private int Gear
+        {
+            set
+            {
+                if (value == _gear) return;
+                _gear = value;
+
+                if (animator != null)
+                {
+                    animator.SetInteger(gearParameter, value);
+                    animator.SetBool(backGearParameter, value == GEAR_BACK);
+                }
+            }
+            get => _gear;
+        }
+
+        private bool backGear {
+            set => Gear = GEAR_BACK;
+            get => Gear == GEAR_BACK;
         }
 
         private void Start()
         {
             animator = GetComponentInParent<Animator>();
-            rigidbody = GetComponent<Rigidbody>();
-            wheels = GetComponentsInChildren<WheelCollider>();
 
             wheelCount = wheels.Length;
-            wheelPositions = new Vector2[wheelCount];
-            wheelTransforms = new Transform[wheelCount];
-            wheelLocalRotations = new Quaternion[wheelCount];
-            wheelAngles = new float[wheelCount];
+            wheelVisualRotationOffsets = new Quaternion[wheelCount];
+            wheelVisualPositionOffsets = new Vector3[wheelCount];
 
-            var worldCenterOfMass = rigidbody.worldCenterOfMass;
-            var worldForward = rigidbody.transform.forward;
-            var worldRight = rigidbody.transform.forward;
             for (var i = 0; i < wheelCount; i++)
             {
                 var wheel = wheels[i];
                 var wheelTransform = wheel.transform;
-                wheelTransforms[i] = wheelTransform;
+                var visual = wheelVisuals[i];
+                if (visual == null) continue;
 
-                var worldPosition = wheelTransform.TransformPoint(wheel.center);
-                var relativePosition = worldPosition - worldCenterOfMass;
-                wheelPositions[i] = new Vector2(
-                    Vector3.Dot(relativePosition, worldRight),
-                    Vector3.Dot(relativePosition, worldForward)
-                );
-
-                wheelLocalRotations[i] = wheel.transform.localRotation;
-
-                if (wheel.attachedRigidbody != rigidbody) wheels[i] = null;
+                wheelVisualPositionOffsets[i] = wheelTransform.InverseTransformPoint(visual.position) + Vector3.up * wheel.suspensionDistance * wheel.suspensionSpring.targetPosition;
+                wheelVisualRotationOffsets[i] = Quaternion.Inverse(wheelTransform.rotation) * visual.rotation;
             }
 
-            _isDrived = false;
+            _isOperating = false;
 
             if (engineSound != null)
             {
@@ -122,7 +212,7 @@ namespace UdonSimpleCars
         private void Update()
         {
             if (localIsDriver) DriverUpdate();
-            if (IsDrived) DrivedUpdate();
+            LocalUpdate();
         }
 
         private void DriverUpdate()
@@ -136,60 +226,32 @@ namespace UdonSimpleCars
 
             var deltaTime = Time.deltaTime;
 
-            accelerationValue = LinearLerp(accelerationValue, accelerationInput, accelerationResponse * deltaTime, -1.0f, 1.0f);
-            brakeValue = (brakeInput < 0.1f) ? 0.0f : LinearLerp(brakeValue, brakeInput, brakeResponse * deltaTime, 0.0f, 1.0f);
-            steeringValue = LinearLerp(steeringValue, steeringInput, steeringResponse * deltaTime, -1.0f, 1.0f);
+            AccelerationValue = LinearLerp(AccelerationValue, accelerationInput, accelerationResponse * deltaTime, -1.0f, 1.0f);
+            BrakeValue = (brakeInput < 0.1f) ? 0.0f : LinearLerp(BrakeValue, brakeInput, brakeResponse * deltaTime, 0.0f, 1.0f);
+            SteeringValue = LinearLerp(SteeringValue, steeringInput, steeringResponse * deltaTime, -1.0f, 1.0f);
 
-            var rpmAvg = 0.0f;
-            for (var i = 0; i < wheelCount; i++)
-            {
-                var wheel = wheels[i];
-                if (wheel == null) continue;
-                var wheelPosition = wheelPositions[i];
-
-                wheel.motorTorque = accelerationValue * accelerationTorque / wheelCount;
-
-                if (wheelPosition.y > 0)
-                {
-                    wheel.steerAngle = steeringValue * maxSteeringAngle;
-                }
-
-                rpmAvg += wheel.rpm / wheelCount;
-            }
-            wheelsRPM = rpmAvg;
-
-            SetBrake(brakeValue);
+            foreach (var wheel in steeredWheels) wheel.steerAngle = SteeringValue * maxSteeringAngle;
+            foreach (var wheel in drivingWheels) wheel.motorTorque = AccelerationValue * accelerationTorque / drivingWheels.Length;
+            foreach (var wheel in brakeWheels) wheel.brakeTorque = BrakeValue * brakeTorque;
         }
 
-        private void DrivedUpdate()
+        private void LocalUpdate()
         {
-
-            if (engineSound != null)
-            {
-                var absAcc = Mathf.Abs(accelerationValue);
-                engineSound.pitch = engineSoundPitch.Evaluate(absAcc);
-                engineSound.volume = engineSoundVolume.Evaluate(absAcc);
-            }
-
-            if (animator != null)
-            {
-                animator.SetFloat(accelerationParameter, accelerationValue);
-                animator.SetFloat(brakeParameter, brakeValue);
-                animator.SetFloat(steeringParameter, steeringValue * 0.5f + 0.5f);
-                animator.SetBool(backGearParameter, backGear);
-            }
+            if (!IsOperating) return;
 
             for (var i = 0; i < wheelCount; i++)
             {
-                var wheelPosition = wheelPositions[i];
-                var wheelTransform = wheelTransforms[i];
-                var wheelLocalRotation = wheelLocalRotations[i];
-                var wheel = wheels[i];
-                if (wheel == null) continue;
+                var visual = wheelVisuals[i];
+                if (visual == null) continue;
 
-                wheelAngles[i] = (wheelAngles[i] + (localIsDriver ? wheel.rpm : wheelsRPM) * 60.0f * Time.deltaTime * 360.0f) % 360.0f;
-                var wheelRotation = Quaternion.AngleAxis(wheelAngles[i], Vector3.right);
-                wheelTransform.localRotation = (wheelPosition.y > 0 ? (Quaternion.AngleAxis(steeringValue * maxSteeringAngle, Vector3.up) * wheelRotation) : wheelRotation) * wheelLocalRotation;
+                var wheel = wheels[i];
+                var wheelTransform = wheel.transform;
+
+                Vector3 position;
+                Quaternion rotation;
+                wheel.GetWorldPose(out position, out rotation);
+                visual.position = wheelTransform.TransformPoint(wheelTransform.InverseTransformPoint(position) + wheelVisualPositionOffsets[i]);
+                visual.rotation = rotation * wheelVisualRotationOffsets[i];
             }
         }
 
@@ -199,7 +261,7 @@ namespace UdonSimpleCars
             localIsDriver = true;
 
             backGear = false;
-            IsDrived = true;
+            IsOperating = true;
         }
 
         public void _OnEnteredAsPassenger()
@@ -210,16 +272,19 @@ namespace UdonSimpleCars
         {
             if (localIsDriver)
             {
-                localIsDriver = false;
-                IsDrived = false;
+                AccelerationValue = 0;
 
-                accelerationValue = 0;
+                localIsDriver = false;
+                IsOperating = false;
             }
         }
 
         public void _Respawn()
         {
-            if (IsDrived) return;
+            if (IsOperating) return;
+
+            localIsDriver = true;
+            IsOperating = true;
 
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
 
@@ -227,19 +292,12 @@ namespace UdonSimpleCars
             objectSync.Respawn();
 
             backGear = false;
-            accelerationValue = 0;
-            steeringValue = 0;
-            brakeValue = 0;
-        }
+            AccelerationValue = 0;
+            SteeringValue = 0;
+            BrakeValue = 1;
 
-        private void SetBrake(float value)
-        {
-            for (var i = 0; i < wheelCount; i++)
-            {
-                var wheel = wheels[i];
-                if (wheel == null) continue;
-                wheel.brakeTorque = value * brakeTorque / wheelCount;
-            }
+            localIsDriver = false;
+            IsOperating = false;
         }
 
         private float LinearLerp(float currentValue, float targetValue, float speed, float minValue, float maxValue)
