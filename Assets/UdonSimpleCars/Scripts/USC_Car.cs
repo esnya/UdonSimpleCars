@@ -1,4 +1,4 @@
-﻿#pragma warning disable IDE1006
+#pragma warning disable IDE1006
 
 using UdonSharp;
 using UdonToolkit;
@@ -222,24 +222,32 @@ namespace UdonSimpleCars
             {
                 var wheel = wheels[i];
                 var wheelTransform = wheel.transform;
-                var visual = wheelVisuals[i];
-                if (visual == null) continue;
 
-                wheelVisualPositionOffsets[i] = wheelTransform.InverseTransformPoint(visual.position) + Vector3.up * wheel.suspensionDistance * wheel.suspensionSpring.targetPosition;
-                wheelVisualLocalRotations[i] = visual.localRotation;
-                wheelVisualAxiesRight[i] = visual.InverseTransformDirection(wheelTransform.right);
-                wheelVisualAxiesUp[i] = visual.InverseTransformDirection(wheelTransform.up);
+                var visual = i < wheelVisuals.Length ? wheelVisuals[i] : null;
+                if (visual != null)
+                {
+                    wheelVisualPositionOffsets[i] = wheelTransform.InverseTransformPoint(visual.position) + Vector3.up * wheel.suspensionDistance * wheel.suspensionSpring.targetPosition;
+                    wheelVisualLocalRotations[i] = visual.localRotation;
+                    wheelVisualAxiesRight[i] = visual.InverseTransformDirection(wheelTransform.right);
+                    wheelVisualAxiesUp[i] = visual.InverseTransformDirection(wheelTransform.up);
+                }
 
                 wheelIsSteered[i] = IsWheelSteered(wheel);
             }
-
-            _isOperating = false;
 
             if (engineSound != null)
             {
                 engineSound.playOnAwake = true;
                 engineSound.loop = true;
             }
+
+            LocalIsDriver = false;
+            LocalInVehicle = false;
+            AccelerationValue = 0;
+            BrakeValue = 1.0f;
+            SteeringValue = 0;
+            IsOperating = false;
+            Gear = GEAR_DRIVE;
         }
 
         private void Update()
@@ -274,7 +282,7 @@ namespace UdonSimpleCars
         {
             if (!IsOperating) return;
 
-            for (var i = 0; i < wheelCount; i++)
+            for (var i = 0; i < wheelVisuals.Length; i++)
             {
                 var visual = wheelVisuals[i];
                 if (visual == null) continue;
