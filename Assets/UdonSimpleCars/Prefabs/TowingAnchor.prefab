@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3660450628990376930}
   - component: {fileID: 3318770050843764781}
   m_Layer: 17
-  m_Name: TugAnchor
+  m_Name: TowingAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55,8 +55,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45115577ef41a5b4ca741ed302693907, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   interactTextPlacement: {fileID: 0}
   interactText: Use
   interactTextGO: {fileID: 0}
