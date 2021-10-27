@@ -11,7 +11,7 @@ namespace UdonSimpleCars
     [
         UdonBehaviourSyncMode(/*BehaviourSyncMode.None*/ BehaviourSyncMode.NoVariableSync),
     ]
-    public class USC_TugAnchor : UdonSharpBehaviour
+    public class USC_TowingAnchor : UdonSharpBehaviour
     {
         [Tooltip("Default: VRCObjectSync in parent")] public GameObject ownerDetector;
         [HideInInspector] public Rigidbody vehicleRigidbody;

@@ -15,7 +15,7 @@ namespace UdonSimpleCars
         RequireComponent(typeof(Rigidbody)),
         RequireComponent(typeof(SphereCollider))
     ]
-    public class USC_TugJoint : UdonSharpBehaviour
+    public class USC_TowingJoint : UdonSharpBehaviour
     {
         [SectionHeader("Anchor")]
         public LayerMask anchorLayers = -1;
@@ -32,9 +32,9 @@ namespace UdonSimpleCars
         private Rigidbody parentRigidbody;
         private Vector3 center;
         private float radius;
-        private USC_TugAnchor _connectedAnchor;
+        private USC_TowingAnchor _connectedAnchor;
         private Vector3 prevRelativePosition;
-        private USC_TugAnchor ConnectedAnchor
+        private USC_TowingAnchor ConnectedAnchor
         {
             set
             {
@@ -96,7 +96,7 @@ namespace UdonSimpleCars
             _Connect(anchor);
         }
 
-        public void _Connect(USC_TugAnchor anchor)
+        public void _Connect(USC_TowingAnchor anchor)
         {
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
 
@@ -130,14 +130,14 @@ namespace UdonSimpleCars
             audioSource.PlayOneShot(clip);
         }
 
-        private USC_TugAnchor FindAnchor()
+        private USC_TowingAnchor FindAnchor()
         {
             var colliders = Physics.OverlapSphere(transform.TransformPoint(center), radius, anchorLayers, QueryTriggerInteraction.Collide);
 
             foreach (var collider in colliders)
             {
                 if (collider == null) continue;
-                var anchor = collider.GetComponent<USC_TugAnchor>();
+                var anchor = collider.GetComponent<USC_TowingAnchor>();
                 if (anchor != null) return anchor;
             }
 
