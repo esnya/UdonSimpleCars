@@ -34,6 +34,7 @@ namespace UdonSimpleCars
         [SectionHeader("Others")]
         public Transform steeringWheel;
         public Vector3 steeringWheelAxis = Vector3.forward;
+        public GameObject operatingOnly, inVehicleOnly, driverOnly, backGearOnly, brakingOnly;
 
 
         [SectionHeader("VR Inputs")]
@@ -56,6 +57,8 @@ namespace UdonSimpleCars
         [Tooltip("Float")] public string steeringParameter = "Steering";
         [Tooltip("Integer")] public string gearParameter = "Gear";
         [Tooltip("Bool")] public string backGearParameter = "BackGear";
+        [Tooltip("Bool")] public string localIsDriverParameter = "LocalIsDriver";
+        [Tooltip("Bool")] public string localInVehicleParameter = "LocalInVehicle";
 
         [SectionHeader("Editor")]
         public GameObject respawnerPrefab;
@@ -68,19 +71,40 @@ namespace UdonSimpleCars
         public WheelCollider[] brakeWheels = {};
         // public WheelCollider[] parkingBrakeWheels = {};
         public Transform[] wheelVisuals = {};
-        public Transform[] steeringWheelTransforms;
 
         private Animator animator;
         private int wheelCount;
         private Quaternion[] wheelVisualRotationOffsets;
         private Vector3[] wheelVisualPositionOffsets;
-        private bool localIsDriver;
         private Quaternion steeringWheelLocalRotation;
+        private bool _localIsDriver;
+        private bool LocalIsDriver
+        {
+            set
+            {
+                _localIsDriver = value;
+                if (driverOnly != null) driverOnly.SetActive(value);
+                if (animator != null) animator.SetBool(localInVehicleParameter, value);
+            }
+            get => _localIsDriver;
+        }
+
+        private bool _localInVehicle;
+
+        private bool LocalInVehicle
+        {
+            set
+            {
+                _localInVehicle = value;
+                if (inVehicleOnly != null) inVehicleOnly.SetActive(value);
+                if (animator != null) animator.SetBool(localInVehicleParameter, value);
+            }
+            get => _localInVehicle;
+        }
 
         [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(AccelerationValue))] private float _accelerationValue;
         private float AccelerationValue {
             set {
-                if (value == _accelerationValue) return;
                 _accelerationValue = value;
 
                 if (IsOperating)
@@ -98,7 +122,7 @@ namespace UdonSimpleCars
                     }
                 }
 
-                if (localIsDriver)
+                if (LocalIsDriver)
                 {
                     foreach (var wheel in drivingWheels) wheel.motorTorque = value * accelerationTorque / drivingWheels.Length;
                 }
@@ -108,7 +132,6 @@ namespace UdonSimpleCars
         [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(BrakeValue))] private float _brakeValue;
         private float BrakeValue {
             set {
-                if (value == _brakeValue) return;
                 _brakeValue = value;
 
                 if (animator != null && IsOperating)
@@ -116,8 +139,9 @@ namespace UdonSimpleCars
                     animator.SetFloat(brakeParameter, value);
                 }
 
+                if (brakingOnly != null) brakingOnly.SetActive(value > 0);
 
-                if (localIsDriver)
+                if (LocalIsDriver)
                 {
                      foreach (var wheel in brakeWheels) wheel.brakeTorque = value * brakeTorque / brakeWheels.Length;
                 }
@@ -127,16 +151,14 @@ namespace UdonSimpleCars
         [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(SteeringValue))] private float _steeringValue;
         private float SteeringValue {
             set {
-                if (value == _steeringValue) return;
                 _steeringValue = value;
-
 
                 if (animator != null && IsOperating)
                 {
                     animator.SetFloat(steeringParameter, value * 0.5f + 0.5f);
                 }
 
-                if (localIsDriver)
+                if (LocalIsDriver)
                 {
                     foreach (var wheel in steeredWheels) wheel.steerAngle = value * maxSteeringAngle/ steeredWheels.Length;
                 }
@@ -149,6 +171,7 @@ namespace UdonSimpleCars
             set
             {
                 _isOperating = value;
+                if (operatingOnly != null) operatingOnly.SetActive(value);
                 if (engineSound != null) engineSound.gameObject.SetActive(value);
                 if (animator != null) animator.SetBool(isOperatingParameter, value);
             }
@@ -164,8 +187,9 @@ namespace UdonSimpleCars
         {
             set
             {
-                if (value == _gear) return;
                 _gear = value;
+
+                if (backGearOnly != null) backGearOnly.SetActive(value == GEAR_BACK);
 
                 if (animator != null)
                 {
@@ -176,7 +200,7 @@ namespace UdonSimpleCars
             get => _gear;
         }
 
-        private bool backGear {
+        private bool BackGear {
             set => Gear = GEAR_BACK;
             get => Gear == GEAR_BACK;
         }
@@ -211,18 +235,18 @@ namespace UdonSimpleCars
 
         private void Update()
         {
-            if (localIsDriver) DriverUpdate();
+            if (LocalIsDriver) DriverUpdate();
             LocalUpdate();
         }
 
         private void DriverUpdate()
         {
-            var accelerationInput = Input.GetKey(backAccelerationKey) ? -1.0f : (Input.GetKey(accelerationKey) ? 1.0f : (Input.GetAxis(accelerationAxis) * (backGear ? -1.0f : 1.0f)));
+            var accelerationInput = Input.GetKey(backAccelerationKey) ? -1.0f : (Input.GetKey(accelerationKey) ? 1.0f : (Input.GetAxis(accelerationAxis) * (BackGear ? -1.0f : 1.0f)));
             var steeringInput = Input.GetKey(steeringKeyLeft) ? -1.0f : (Input.GetKey(steeringKeyRight) ? 1.0f : Input.GetAxis(steeringAxis));
             var brakeInput = Input.GetKey(brakeKey) ? 1.0f : Input.GetAxis(brakeAxis);
 
             var backGearInput = Input.GetAxis(backGearAxis);
-            if (Mathf.Abs(backGearInput) > 0.5f) backGear = backGearInput < -0.5f;
+            if (Mathf.Abs(backGearInput) > 0.5f) BackGear = backGearInput < -0.5f;
 
             var deltaTime = Time.deltaTime;
 
@@ -258,32 +282,34 @@ namespace UdonSimpleCars
         public void _OnEnteredAsDriver()
         {
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
-            localIsDriver = true;
+            LocalIsDriver = true;
+            LocalInVehicle = true;
 
-            backGear = false;
+            BackGear = false;
             IsOperating = true;
         }
 
         public void _OnEnteredAsPassenger()
         {
+            LocalInVehicle = true;
         }
 
         public void _OnExited()
         {
-            if (localIsDriver)
+            if (LocalIsDriver)
             {
                 AccelerationValue = 0;
-
-                localIsDriver = false;
+                LocalIsDriver = false;
                 IsOperating = false;
             }
+            LocalInVehicle = false;
         }
 
         public void _Respawn()
         {
             if (IsOperating) return;
 
-            localIsDriver = true;
+            LocalIsDriver = true;
             IsOperating = true;
 
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
@@ -291,12 +317,12 @@ namespace UdonSimpleCars
             var objectSync = (VRCObjectSync)GetComponent(typeof(VRCObjectSync));
             objectSync.Respawn();
 
-            backGear = false;
+            BackGear = false;
             AccelerationValue = 0;
             SteeringValue = 0;
             BrakeValue = 1;
 
-            localIsDriver = false;
+            LocalIsDriver = false;
             IsOperating = false;
         }
 

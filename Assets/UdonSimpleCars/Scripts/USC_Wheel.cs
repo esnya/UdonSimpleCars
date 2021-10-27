@@ -1,7 +1,7 @@
 ﻿
 using UnityEngine;
-using UdonSharpEditor;
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
+using UdonSharpEditor;
 using UnityEditor;
 using System.Linq;
 #endif
@@ -69,7 +69,6 @@ namespace UdonSimpleCars
 
                 if (change.changed)
                 {
-                    car.steeringWheelTransforms = car.steeredWheels.Select(sw => car.wheels.Zip(car.wheelVisuals, (w, t) => w == sw ? t : null).FirstOrDefault(t => t != null)).ToArray();
                     car.ApplyProxyModifications();
                     EditorUtility.SetDirty(UdonSharpEditorUtility.GetBackingUdonBehaviour(car));
                 }
