@@ -20,7 +20,7 @@ namespace UdonSimpleCars
         [SectionHeader("Anchor")]
         public LayerMask anchorLayers = -1;
         public float spring = 500.0f;
-        public float damping = 50000.0f;
+        public float damping = 100000.0f;
         public float maxAcceleration = 2000.0f;
 
         [SectionHeader("Sounds")]
