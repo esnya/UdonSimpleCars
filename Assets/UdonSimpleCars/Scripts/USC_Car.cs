@@ -202,7 +202,7 @@ namespace UdonSimpleCars
         }
 
         private bool BackGear {
-            set => Gear = GEAR_BACK;
+            set => Gear = value ? GEAR_BACK : GEAR_DRIVE;
             get => Gear == GEAR_BACK;
         }
 
