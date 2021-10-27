@@ -74,9 +74,10 @@ namespace UdonSimpleCars
 
         private Animator animator;
         private int wheelCount;
-        private Quaternion[] wheelVisualRotationOffsets;
-        private Vector3[] wheelVisualPositionOffsets;
-        private Quaternion steeringWheelLocalRotation;
+        private float[] wheelAngles;
+        private Quaternion[] wheelVisualLocalRotations;
+        private Vector3[] wheelVisualPositionOffsets, wheelVisualAxiesRight, wheelVisualAxiesUp;
+        private bool[] wheelIsSteered;
         private bool _localIsDriver;
         private bool LocalIsDriver
         {
@@ -101,7 +102,7 @@ namespace UdonSimpleCars
             }
             get => _localInVehicle;
         }
-
+        [UdonSynced(UdonSyncMode.Smooth)] private float wheelSpeed;
         [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(AccelerationValue))] private float _accelerationValue;
         private float AccelerationValue {
             set {
@@ -210,8 +211,12 @@ namespace UdonSimpleCars
             animator = GetComponentInParent<Animator>();
 
             wheelCount = wheels.Length;
-            wheelVisualRotationOffsets = new Quaternion[wheelCount];
+            wheelAngles = new float[wheelCount];
+            wheelVisualLocalRotations = new Quaternion[wheelCount];
             wheelVisualPositionOffsets = new Vector3[wheelCount];
+            wheelVisualAxiesRight = new Vector3[wheelCount];
+            wheelVisualAxiesUp = new Vector3[wheelCount];
+            wheelIsSteered = new bool[wheelCount];
 
             for (var i = 0; i < wheelCount; i++)
             {
@@ -221,7 +226,11 @@ namespace UdonSimpleCars
                 if (visual == null) continue;
 
                 wheelVisualPositionOffsets[i] = wheelTransform.InverseTransformPoint(visual.position) + Vector3.up * wheel.suspensionDistance * wheel.suspensionSpring.targetPosition;
-                wheelVisualRotationOffsets[i] = Quaternion.Inverse(wheelTransform.rotation) * visual.rotation;
+                wheelVisualLocalRotations[i] = visual.localRotation;
+                wheelVisualAxiesRight[i] = visual.InverseTransformDirection(wheelTransform.right);
+                wheelVisualAxiesUp[i] = visual.InverseTransformDirection(wheelTransform.up);
+
+                wheelIsSteered[i] = IsWheelSteered(wheel);
             }
 
             _isOperating = false;
@@ -257,6 +266,8 @@ namespace UdonSimpleCars
             foreach (var wheel in steeredWheels) wheel.steerAngle = SteeringValue * maxSteeringAngle;
             foreach (var wheel in drivingWheels) wheel.motorTorque = AccelerationValue * accelerationTorque / drivingWheels.Length;
             foreach (var wheel in brakeWheels) wheel.brakeTorque = BrakeValue * brakeTorque;
+
+            wheelSpeed = CalculateWheelSpeed();
         }
 
         private void LocalUpdate()
@@ -275,7 +286,12 @@ namespace UdonSimpleCars
                 Quaternion rotation;
                 wheel.GetWorldPose(out position, out rotation);
                 visual.position = wheelTransform.TransformPoint(wheelTransform.InverseTransformPoint(position) + wheelVisualPositionOffsets[i]);
-                visual.rotation = rotation * wheelVisualRotationOffsets[i];
+
+                var wheelAngle = wheelAngles[i] + (LocalIsDriver ? wheel.rpm : wheelSpeed * wheel.radius) * Time.deltaTime  * (360.0f / 60.0f);
+                wheelAngles[i] = wheelAngle;
+
+                var steeringRotation = wheelIsSteered[i] ? Quaternion.AngleAxis(SteeringValue * maxSteeringAngle, wheelVisualAxiesUp[i]) : Quaternion.identity;
+                visual.localRotation = steeringRotation * Quaternion.AngleAxis(wheelAngle, wheelVisualAxiesRight[i]) * wheelVisualLocalRotations[i];
             }
         }
 
@@ -329,6 +345,22 @@ namespace UdonSimpleCars
         private float LinearLerp(float currentValue, float targetValue, float speed, float minValue, float maxValue)
         {
             return Mathf.Clamp(Mathf.Lerp(currentValue, targetValue, speed), minValue, maxValue);
+        }
+
+        private float CalculateWheelSpeed()
+        {
+            var result = 0.0f;
+            foreach (var wheel in wheels) result += wheel.rpm / (wheel.radius * wheelCount);
+            return result;
+        }
+
+        private bool IsWheelSteered(WheelCollider wheel)
+        {
+            foreach (var steeredWheel in steeredWheels)
+            {
+                if (steeredWheel == wheel) return true;
+            }
+            return false;
         }
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
