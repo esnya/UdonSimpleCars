@@ -22,6 +22,7 @@ namespace UdonSimpleCars
         public float spring = 500.0f;
         public float damping = 100000.0f;
         public float maxAcceleration = 2000.0f;
+        public float massScale = 1.0f;
 
         [SectionHeader("Sounds")]
         public AudioSource audioSource;
@@ -34,6 +35,7 @@ namespace UdonSimpleCars
         private float radius;
         private USC_TowingAnchor _connectedAnchor;
         private Vector3 prevRelativePosition;
+        private Collider[] colliders;
         private USC_TowingAnchor ConnectedAnchor
         {
             set
@@ -82,7 +84,7 @@ namespace UdonSimpleCars
 
             if (Networking.IsOwner(vehicleRoot))
             {
-                parentRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(-transform.TransformVector(force), maxAcceleration) * Time.fixedDeltaTime, transform.position, ForceMode.Acceleration);
+                parentRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(-transform.TransformVector(force), maxAcceleration) * Time.fixedDeltaTime * massScale, transform.position, ForceMode.Acceleration);
             }
         }
 
