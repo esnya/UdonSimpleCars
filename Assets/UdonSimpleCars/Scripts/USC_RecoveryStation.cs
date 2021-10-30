@@ -22,7 +22,7 @@ namespace UdonSimpleCars
 
         public override void OnStationEntered(VRCPlayerApi player)
         {
-            if (player.isLocal) station.ExitStation(player);
+            if (player.isLocal) _Exit();
         }
 
         public override void OnStationExited(VRCPlayerApi player)
@@ -34,6 +34,11 @@ namespace UdonSimpleCars
         {
             gameObject.SetActive(true);
             Networking.LocalPlayer.UseAttachedStation();
+        }
+
+        public void _Exit()
+        {
+            station.ExitStation(Networking.LocalPlayer);
         }
     }
 }

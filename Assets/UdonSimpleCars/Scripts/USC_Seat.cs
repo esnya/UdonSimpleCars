@@ -23,7 +23,7 @@ namespace UdonSimpleCars
         {
             car = GetComponentInParent<USC_Car>();
             station = (VRCStation)GetComponent(typeof(VRCStation));
-            recoveryStation = GetComponentInChildren<USC_RecoveryStation>();
+            recoveryStation = GetComponentInChildren<USC_RecoveryStation>(true);
         }
 
         private void Update()
