@@ -18,10 +18,12 @@ namespace UdonSimpleCars
 
         private USC_Car car;
         private VRCStation station;
+        private USC_RecoveryStation recoveryStation;
         private void Start()
         {
             car = GetComponentInParent<USC_Car>();
             station = (VRCStation)GetComponent(typeof(VRCStation));
+            recoveryStation = GetComponentInChildren<USC_RecoveryStation>();
         }
 
         private void Update()
@@ -47,7 +49,11 @@ namespace UdonSimpleCars
 
         public override void OnStationExited(VRCPlayerApi player)
         {
-            if (player.isLocal) car._OnExited();
+            if (player.isLocal)
+            {
+                car._OnExited();
+                if (recoveryStation != null) recoveryStation._Enter();
+            }
         }
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
