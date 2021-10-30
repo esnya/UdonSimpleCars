@@ -29,14 +29,5 @@ namespace UdonSimpleCars
         {
             return Networking.IsOwner(ownerDetector) && !vehicleRigidbody.isKinematic;
         }
-
-        public void _WakeUp()
-        {
-            foreach (var rigidbody in vehicleRigidbody.GetComponentsInChildren<Rigidbody>())
-            {
-                if (rigidbody == null) continue;
-                rigidbody.WakeUp();
-            }
-        }
     }
 }
