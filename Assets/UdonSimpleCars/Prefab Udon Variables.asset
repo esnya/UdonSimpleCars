@@ -30,24 +30,6 @@ MonoBehaviour:
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: True
-  - prefabInstance: {fileID: 867768652620275319, guid: b83f5e71b839ccb42854100226e29fe4,
-      type: 3}
-    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/PassengerSeat
-      (L).prefab
-    udonVariables:
-    - udonInstance: {fileID: 1746256873730171143, guid: b83f5e71b839ccb42854100226e29fe4,
-        type: 3}
-      gameObjectName: PassengerSeat (L)
-      variables:
-      - symbolName: getOutButton
-        objectReference: {fileID: 0}
-        value: Oculus_CrossPlatform_Button4
-      - symbolName: getOutKey
-        objectReference: {fileID: 0}
-        value: Return
-      - symbolName: isDriver
-        objectReference: {fileID: 0}
-        value: False
   - prefabInstance: {fileID: 5269387084042503976, guid: 3abb4122a0be6fb479033738f2932fa2,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/PassengerSeat
