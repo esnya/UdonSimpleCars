@@ -77,9 +77,15 @@ MonoBehaviour:
       - symbolName: damping
         objectReference: {fileID: 0}
         value: 100000
+      - symbolName: massScale
+        objectReference: {fileID: 0}
+        value: 1
       - symbolName: maxAcceleration
         objectReference: {fileID: 0}
         value: 2000
+      - symbolName: maxDistance
+        objectReference: {fileID: 0}
+        value: 1
       - symbolName: onConnected
         objectReference: {fileID: 8300000, guid: 64ca17c1188412347901cf9e24b1ed13,
           type: 3}
