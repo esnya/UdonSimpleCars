@@ -29,13 +29,12 @@ namespace UdonSimpleCars
 
         [SectionHeader("Sounds")]
         public AudioSource engineSound;
-        public AnimationCurve engineSoundPitch = AnimationCurve.Linear(0, 1.0f, 1, 1.5f), engineSoundVolume = AnimationCurve.Linear(0, 0.8f, 1, 1.0f);
+        public AnimationCurve engineSoundVolume = AnimationCurve.EaseInOut(0, 0.8f, 1, 1), engineSoundPitch = AnimationCurve.EaseInOut(0, 1, 1, 1.5f);
 
         [SectionHeader("Others")]
         public Transform steeringWheel;
         public Vector3 steeringWheelAxis = Vector3.forward;
         public GameObject operatingOnly, inVehicleOnly, driverOnly, backGearOnly, brakingOnly;
-
 
         [SectionHeader("VR Inputs")]
         [Popup("GetAxisList")] public string steeringAxis = "Oculus_CrossPlatform_SecondaryThumbstickHorizontal";
@@ -374,14 +373,7 @@ namespace UdonSimpleCars
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         private void Reset()
         {
-            engineSoundPitch = new AnimationCurve(new[] {
-                new Keyframe(0.0f, 1.0f),
-                new Keyframe(1.0f, 1.2f),
-            });
-            engineSoundVolume = new AnimationCurve(new[] {
-                new Keyframe(0.0f, 0.8f),
-                new Keyframe(1.0f, 1.0f),
-            });
+            GetComponent<VRCObjectSync>().AllowCollisionOwnershipTransfer = false;
         }
 
         private string[] GetAxisList() => new[] {
