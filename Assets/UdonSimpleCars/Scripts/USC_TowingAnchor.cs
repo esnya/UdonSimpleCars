@@ -2,9 +2,6 @@
 using UdonSharp;
 using UnityEngine;
 using VRC.SDK3.Components;
-using VRC.SDKBase;
-using VRC.Udon;
-using VRC.Udon.Common.Interfaces;
 
 namespace UdonSimpleCars
 {
@@ -23,11 +20,6 @@ namespace UdonSimpleCars
 
             vehicleRigidbody = objectSync != null ? objectSync.GetComponent<Rigidbody>() : null;
             if (vehicleRigidbody == null) vehicleRigidbody = GetComponentInParent<Rigidbody>();
-        }
-
-        public bool _IsConnectable()
-        {
-            return Networking.IsOwner(ownerDetector) && !vehicleRigidbody.isKinematic;
         }
     }
 }

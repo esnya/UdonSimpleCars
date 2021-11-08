@@ -4,7 +4,6 @@ using UdonToolkit;
 using UnityEngine;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
-using VRC.Udon;
 using VRC.Udon.Common.Interfaces;
 
 namespace UdonSimpleCars
@@ -23,7 +22,9 @@ namespace UdonSimpleCars
         public float damping = 100000.0f;
         public float maxAcceleration = 2000.0f;
         public float massScale = 1.0f;
-        public float maxDistance = 1.0f;
+        public float wakeUpDistance = 1.0f;
+        public float breakingDistance = 10.0f;
+        public float reconnectionDelay = 5.0f;
 
         [SectionHeader("Sounds")]
         public AudioSource audioSource;
@@ -37,11 +38,15 @@ namespace UdonSimpleCars
         private USC_TowingAnchor _connectedAnchor;
         private Vector3 prevRelativePosition;
         private Collider[] colliders;
+        private GameObject anchorOwnerDetector;
+        private Rigidbody anchorRigidbody;
         private USC_TowingAnchor ConnectedAnchor
         {
             set
             {
                 _connectedAnchor = value;
+                anchorOwnerDetector = value == null ? null : value.ownerDetector;
+                anchorRigidbody = value == null ? null : value.vehicleRigidbody;
             }
             get => _connectedAnchor;
         }
@@ -49,6 +54,7 @@ namespace UdonSimpleCars
         [UdonSynced(UdonSyncMode.Smooth)] Vector3 force;
 
         private Vector3 jointVelocity, prevJointPosition;
+        private SphereCollider trigger;
 
         private void Start()
         {
@@ -59,8 +65,9 @@ namespace UdonSimpleCars
             if (objectSync != null) vehicleRoot = objectSync.gameObject;
             if (vehicleRoot == null) vehicleRoot = gameObject;
 
-            center = GetComponent<SphereCollider>().center;
-            radius = GetComponent<SphereCollider>().radius;
+            trigger = GetComponent<SphereCollider>();
+            center = trigger.center;
+            radius = trigger.radius;
             initialized = true;
         }
 
@@ -70,25 +77,26 @@ namespace UdonSimpleCars
 
             if (ConnectedAnchor != null)
             {
-                if (ConnectedAnchor._IsConnectable())
+                var connectable = Networking.IsOwner(anchorOwnerDetector);
+                if (connectable)
                 {
                     var jointPosition = transform.position;
                     jointVelocity = (jointPosition - prevJointPosition) * Time.fixedDeltaTime;
                     prevJointPosition = jointPosition;
 
-                    var anchorRigidbody = ConnectedAnchor.vehicleRigidbody;
-
                     var connectedAnchorPositon = _connectedAnchor.transform.position;
                     var relativePosition = -transform.InverseTransformPoint(connectedAnchorPositon);
 
-                    force = relativePosition * spring + (relativePosition - prevRelativePosition) * damping;
-                    anchorRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(transform.TransformVector(force), maxAcceleration) * Time.fixedDeltaTime, connectedAnchorPositon, ForceMode.Acceleration);
-                    prevRelativePosition = relativePosition;
-
-                    if (relativePosition.sqrMagnitude > maxDistance * maxDistance)
+                    var distance = relativePosition.magnitude;
+                    if (distance > breakingDistance) SendCustomNetworkEvent(NetworkEventTarget.All, nameof(Disconnect));
+                    else if (distance > wakeUpDistance * wakeUpDistance) WakeUp();
+                    else
                     {
-                        WakeUp();
+                        force = relativePosition * spring + (relativePosition - prevRelativePosition) * damping;
+                        anchorRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(transform.TransformVector(force), maxAcceleration) * Time.fixedDeltaTime, connectedAnchorPositon, ForceMode.Acceleration);
                     }
+
+                    prevRelativePosition = relativePosition;
                 }
                 else
                 {
@@ -107,7 +115,7 @@ namespace UdonSimpleCars
             if (ConnectedAnchor != null) return;
 
             var anchor = FindAnchor();
-            if (anchor == null || !anchor._IsConnectable()) return;
+            if (anchor == null || !Networking.IsOwner(anchor.ownerDetector)) return;
 
             _Connect(anchor);
         }
@@ -128,6 +136,7 @@ namespace UdonSimpleCars
 
         public void Disconnect()
         {
+            DisableTrigger();
             force = Vector3.zero;
             isConnected = false;
             ConnectedAnchor = null;
@@ -141,6 +150,17 @@ namespace UdonSimpleCars
 
         public void OnConnected() => PlayOneShot(onConnected);
         public void OnDisconnected() => PlayOneShot(onDisconnected);
+
+        public void _EnableTrigger()
+        {
+            trigger.enabled = true;
+        }
+
+        private void DisableTrigger()
+        {
+            trigger.enabled = false;
+            SendCustomEventDelayedSeconds(nameof(_EnableTrigger), reconnectionDelay);
+        }
 
         private void WakeUp()
         {

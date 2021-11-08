@@ -111,6 +111,9 @@ MonoBehaviour:
       - symbolName: getOutKey
         objectReference: {fileID: 0}
         value: Return
+      - symbolName: isDriver
+        objectReference: {fileID: 0}
+        value: False
     - udonInstance: {fileID: 8311205895600088590, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: UdonSimpleCar
@@ -170,12 +173,21 @@ MonoBehaviour:
       - symbolName: engineSoundVolume
         objectReference: {fileID: 0}
         value: UnityEngine.AnimationCurve
+      - symbolName: gearParameter
+        objectReference: {fileID: 0}
+        value: Gear
       - symbolName: isDrivedParameter
         objectReference: {fileID: 0}
         value: IsDrived
       - symbolName: isOperatingParameter
         objectReference: {fileID: 0}
         value: IsOperating
+      - symbolName: localInVehicleParameter
+        objectReference: {fileID: 0}
+        value: LocalInVehicle
+      - symbolName: localIsDriverParameter
+        objectReference: {fileID: 0}
+        value: LocalIsDriver
       - symbolName: maxSteeringAngle
         objectReference: {fileID: 0}
         value: 20
@@ -201,6 +213,10 @@ MonoBehaviour:
       - symbolName: steeringResponse
         objectReference: {fileID: 0}
         value: 1
+      - symbolName: steeringWheel
+        objectReference: {fileID: 5326935212896379205, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+          type: 3}
+        value: SteeringWheel (UnityEngine.Transform)
       - symbolName: steeringWheelAxis
         objectReference: {fileID: 0}
         value: (0.0, 0.0, 1.0)
