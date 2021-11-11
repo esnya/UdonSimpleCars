@@ -15,7 +15,7 @@ MonoBehaviour:
   udonVariables:
   - prefabInstance: {fileID: 8154255029462950915, guid: 06526237862500e42bc60720a296c08c,
       type: 3}
-    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/DriverSeat.prefab
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Core/DriverSeat.prefab
     udonVariables:
     - udonInstance: {fileID: 8154255029462950913, guid: 06526237862500e42bc60720a296c08c,
         type: 3}
@@ -32,7 +32,7 @@ MonoBehaviour:
         value: True
   - prefabInstance: {fileID: 5269387084042503976, guid: 3abb4122a0be6fb479033738f2932fa2,
       type: 3}
-    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/PassengerSeat
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Core/PassengerSeat
       (R).prefab
     udonVariables:
     - udonInstance: {fileID: 6706284258715072600, guid: 3abb4122a0be6fb479033738f2932fa2,
@@ -50,7 +50,7 @@ MonoBehaviour:
         value: False
   - prefabInstance: {fileID: 5058475754793921641, guid: 6fd3734afb303ec40a8d2f652c61da6d,
       type: 3}
-    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/TowingAnchor.prefab
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Towing/TowingAnchor.prefab
     udonVariables:
     - udonInstance: {fileID: 3318770050843764781, guid: 6fd3734afb303ec40a8d2f652c61da6d,
         type: 3}
@@ -61,7 +61,7 @@ MonoBehaviour:
         value: null
   - prefabInstance: {fileID: 1300906920318284338, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
       type: 3}
-    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/TowingJoint.prefab
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Towing/TowingJoint.prefab
     udonVariables:
     - udonInstance: {fileID: 1300906920318284296, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
         type: 3}
@@ -74,18 +74,18 @@ MonoBehaviour:
         objectReference: {fileID: 1300906920318284342, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
           type: 3}
         value: TowingJoint (UnityEngine.AudioSource)
+      - symbolName: breakingDistance
+        objectReference: {fileID: 0}
+        value: 10
       - symbolName: damping
         objectReference: {fileID: 0}
-        value: 100000
+        value: 500
       - symbolName: massScale
         objectReference: {fileID: 0}
         value: 1
       - symbolName: maxAcceleration
         objectReference: {fileID: 0}
         value: 2000
-      - symbolName: maxDistance
-        objectReference: {fileID: 0}
-        value: 1
       - symbolName: onConnected
         objectReference: {fileID: 8300000, guid: 64ca17c1188412347901cf9e24b1ed13,
           type: 3}
@@ -94,9 +94,15 @@ MonoBehaviour:
         objectReference: {fileID: 8300000, guid: 16f6f99eac353cd488cd2e3fbd945510,
           type: 3}
         value: Reloading (UnityEngine.AudioClip)
+      - symbolName: reconnectionDelay
+        objectReference: {fileID: 0}
+        value: 5
       - symbolName: spring
         objectReference: {fileID: 0}
         value: 500
+      - symbolName: wakeUpDistance
+        objectReference: {fileID: 0}
+        value: 1
   - prefabInstance: {fileID: 8311205895600088585, guid: fdec5079b5262f6419ce6e58b22b3cd2,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/SampleAssets/UdonSimpleCar.prefab
