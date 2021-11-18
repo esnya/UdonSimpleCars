@@ -6,6 +6,7 @@ using UnityEngine;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
 using System.Threading;
+using VRC.Udon.Common.Interfaces;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 using UdonSharpEditor;
@@ -71,12 +72,17 @@ namespace UdonSimpleCars
         // public WheelCollider[] parkingBrakeWheels = {};
         public Transform[] wheelVisuals = {};
 
+        [SectionHeader("Others")]
+        [Tooltip("Reparented under parent of the vehicle on Start. Resets positions on respawns.")] public Transform detachedObjects;
+
         private Animator animator;
         private int wheelCount;
         private float[] wheelAngles;
         private Quaternion[] wheelVisualLocalRotations;
         private Vector3[] wheelVisualPositionOffsets, wheelVisualAxiesRight, wheelVisualAxiesUp;
         private bool[] wheelIsSteered;
+        private Rigidbody[] detachedRigidbodies;
+        private Matrix4x4[] detachedRigidbodyTransforms;
         private bool _localIsDriver;
         private bool LocalIsDriver
         {
@@ -247,6 +253,18 @@ namespace UdonSimpleCars
             SteeringValue = 0;
             IsOperating = false;
             Gear = GEAR_DRIVE;
+
+            if (detachedObjects)
+            {
+                detachedObjects.SetParent(transform.parent, true);
+                detachedRigidbodies = detachedObjects.GetComponentsInChildren<Rigidbody>();
+                detachedRigidbodyTransforms = new Matrix4x4[detachedRigidbodies.Length];
+                for (var i = 0; i < detachedRigidbodies.Length; i++)
+                {
+                    var rigidbody = detachedRigidbodies[i];
+                    detachedRigidbodyTransforms[i] = transform.worldToLocalMatrix * rigidbody.transform.localToWorldMatrix;
+                }
+            }
         }
 
         private void Update()
@@ -302,6 +320,22 @@ namespace UdonSimpleCars
             }
         }
 
+        public void OnRespawned()
+        {
+            if (detachedRigidbodies != null)
+            {
+                for (var i = 0; i < detachedRigidbodies.Length; i++)
+                {
+                    var rigidbody = detachedRigidbodies[i];
+                    var m = transform.localToWorldMatrix * detachedRigidbodyTransforms[i];
+                    rigidbody.position = m.MultiplyPoint3x4(Vector3.zero);
+                    rigidbody.rotation = m.rotation;
+                    rigidbody.velocity = Vector3.zero;
+                    rigidbody.angularVelocity = Vector3.zero;
+                }
+            }
+        }
+
         public void _OnEnteredAsDriver()
         {
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
@@ -347,6 +381,8 @@ namespace UdonSimpleCars
 
             LocalIsDriver = false;
             IsOperating = false;
+
+            SendCustomNetworkEvent(NetworkEventTarget.All, nameof(OnRespawned));
         }
 
         private float LinearLerp(float currentValue, float targetValue, float speed, float minValue, float maxValue)

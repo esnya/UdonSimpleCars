@@ -1,6 +1,6 @@
 ﻿
 using UnityEngine;
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UNITY_EDITOR
 using UdonSharpEditor;
 using UnityEditor;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace UdonSimpleCars
         }
     }
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
+#if UNITY_EDITOR
     [CustomEditor(typeof(USC_Wheel))]
     public class USC_WheelEditor : Editor
     {
