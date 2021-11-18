@@ -514,7 +514,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: engineSoundPitch
+      Data: engineSoundVolume
     - Name: $v
       Entry: 7
       Data: 30|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -541,10 +541,10 @@ MonoBehaviour:
       Data: UnityEngineAnimationCurve
     - Name: symbolOriginalName
       Entry: 1
-      Data: engineSoundPitch
+      Data: engineSoundVolume
     - Name: symbolUniqueName
       Entry: 1
-      Data: engineSoundPitch
+      Data: engineSoundVolume
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -577,7 +577,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: engineSoundVolume
+      Data: engineSoundPitch
     - Name: $v
       Entry: 7
       Data: 34|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -598,10 +598,10 @@ MonoBehaviour:
       Data: UnityEngineAnimationCurve
     - Name: symbolOriginalName
       Entry: 1
-      Data: engineSoundVolume
+      Data: engineSoundPitch
     - Name: symbolUniqueName
       Entry: 1
-      Data: engineSoundVolume
+      Data: engineSoundPitch
     - Name: symbolDefaultValue
       Entry: 6
       Data: 

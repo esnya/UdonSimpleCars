@@ -46,31 +46,24 @@ namespace UdonSimpleCars
 
         public override void OnInspectorGUI()
         {
-            var wheel = target as USC_Wheel;
-            var car = wheel.GetUdonSharpComponentInParent<USC_Car>();
-            if (car == null)
-            {
-                EditorGUILayout.HelpBox("USC_Wheel(s) must be child of a USC_Car", MessageType.Error);
-                return;
-            }
+            var target = this.target as USC_Wheel;
+            var car = EditorComponentUtilites.GetCar(target);
+            if (car == null) return;
 
             var wheels = car.GetComponentsInChildren<USC_Wheel>().Select(w => w.GetComponent<WheelCollider>()).ToArray();
-            var wheelCollider = wheel.GetComponent<WheelCollider>();
+            var wheelCollider = target.GetComponent<WheelCollider>();
 
-            using (var change = new EditorGUI.ChangeCheckScope())
+            using (var change = new CarEditScope(car))
             {
                 WheelCapabilityField(ref car.steeredWheels, "Steering", wheelCollider);
                 WheelCapabilityField(ref car.drivingWheels, "Drive", wheelCollider);
                 WheelCapabilityField(ref car.brakeWheels, "Brake", wheelCollider);
-                // WheelCapabilityField(ref car.parkingBrakeWheels, "Parking Brake", wheelCollider);
 
                 WheelObjectField(ref car.wheelVisuals, "Visual Transform", wheels, wheelCollider, true);
 
                 if (change.changed)
                 {
                     car.wheels = wheels;
-                    car.ApplyProxyModifications();
-                    EditorUtility.SetDirty(UdonSharpEditorUtility.GetBackingUdonBehaviour(car));
                 }
             }
         }
