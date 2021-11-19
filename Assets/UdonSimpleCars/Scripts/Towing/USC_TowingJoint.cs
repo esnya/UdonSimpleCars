@@ -44,6 +44,7 @@ namespace UdonSimpleCars
         private Collider[] colliders;
         private Vector3 jointVelocity, prevJointPosition;
         private SphereCollider trigger;
+        private float reconnectableTime;
         #endregion
 
         #region Properties
@@ -107,7 +108,7 @@ namespace UdonSimpleCars
 
         private void OnTriggerEnter(Collider other)
         {
-            if (ConnectedAnchor != null) return;
+            if (ConnectedAnchor != null || Time.time < reconnectableTime) return;
 
             var anchor = FindAnchor();
             if (anchor == null || !Networking.IsOwner(anchor.ownerDetector)) return;
@@ -201,8 +202,9 @@ namespace UdonSimpleCars
 
         private void DisableTrigger()
         {
+            reconnectableTime = Time.time + reconnectionDelay;
             trigger.enabled = false;
-            SendCustomEventDelayedSeconds(nameof(_EnableTrigger), reconnectionDelay);
+            SendCustomEventDelayedSeconds(nameof(_EnableTrigger), reconnectionDelay * 0.8f);
         }
 
         private void WakeUp()
