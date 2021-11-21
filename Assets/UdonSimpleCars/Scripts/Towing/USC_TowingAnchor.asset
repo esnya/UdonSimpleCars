@@ -97,7 +97,7 @@ MonoBehaviour:
       Data: 6|UnityEngine.TooltipAttribute, UnityEngine.CoreModule
     - Name: tooltip
       Entry: 1
-      Data: 'Default: VRCObjectSync in parent'
+      Data: 'Default: VRCObjectSync in parent or find from SaccFlightAndVehicles'
     - Name: 
       Entry: 8
       Data: 
