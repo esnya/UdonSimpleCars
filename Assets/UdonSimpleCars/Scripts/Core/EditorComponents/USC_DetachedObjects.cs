@@ -19,7 +19,7 @@ namespace UdonSimpleCars
         {
             var car = this.GetCar();
 
-            if (car?.detachedObjects != transform)
+            if (car != null && car.detachedObjects != transform)
             {
                 car.detachedObjects = transform;
                 car.ApplyProxyModificationsAndSetDirty();
