@@ -10,7 +10,7 @@ namespace UdonSimpleCars
         public static USC_Car GetCar(this Component target)
         {
             var car = target.GetUdonSharpComponentInParent<USC_Car>();
-            if (car == null) EditorGUILayout.HelpBox($"{target.GetType().Name}(s) must be child of a USC_Car", MessageType.Error);
+            // if (car == null) EditorGUILayout.HelpBox($"{target.GetType().Name}(s) must be child of a USC_Car", MessageType.Error);
             return car;
         }
 
