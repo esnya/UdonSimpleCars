@@ -9,12 +9,12 @@ namespace UdonSimpleCars
 {
     public class USC_DetachedObjects : MonoBehaviour
     {
+#if UNITY_EDITOR
         private void Reset()
         {
             hideFlags = HideFlags.DontSaveInBuild;
         }
 
-#if UNITY_EDITOR
         private void OnValidate()
         {
             var car = this.GetCar();
