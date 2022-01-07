@@ -275,11 +275,11 @@ namespace UdonSimpleCars
 
         private void DriverUpdate()
         {
-            var accelerationInput = Input.GetKey(backAccelerationKey) ? -1.0f : (Input.GetKey(accelerationKey) ? 1.0f : (Input.GetAxis(accelerationAxis) * (BackGear ? -1.0f : 1.0f)));
-            var steeringInput = Input.GetKey(steeringKeyLeft) ? -1.0f : (Input.GetKey(steeringKeyRight) ? 1.0f : Input.GetAxis(steeringAxis));
-            var brakeInput = Input.GetKey(brakeKey) ? 1.0f : Input.GetAxis(brakeAxis);
+            var accelerationInput = Input.GetKey(backAccelerationKey) ? -1.0f : (Input.GetKey(accelerationKey) ? 1.0f : (Input.GetAxisRaw(accelerationAxis) * (BackGear ? -1.0f : 1.0f)));
+            var steeringInput = Input.GetKey(steeringKeyLeft) ? -1.0f : (Input.GetKey(steeringKeyRight) ? 1.0f : Input.GetAxisRaw(steeringAxis));
+            var brakeInput = Input.GetKey(brakeKey) ? 1.0f : Input.GetAxisRaw(brakeAxis);
 
-            var backGearInput = Input.GetAxis(backGearAxis);
+            var backGearInput = Input.GetAxisRaw(backGearAxis);
             if (Mathf.Abs(backGearInput) > 0.5f) BackGear = backGearInput < -0.5f;
 
             var deltaTime = Time.deltaTime;
@@ -316,7 +316,7 @@ namespace UdonSimpleCars
                 wheelAngles[i] = wheelAngle;
 
                 var steeringRotation = wheelIsSteered[i] ? Quaternion.AngleAxis(SteeringValue * maxSteeringAngle, wheelVisualAxiesUp[i]) : Quaternion.identity;
-                visual.localRotation = steeringRotation * Quaternion.AngleAxis(wheelAngle, wheelVisualAxiesRight[i]) * wheelVisualLocalRotations[i];
+                visual.localRotation = wheelVisualLocalRotations[i] * steeringRotation * Quaternion.AngleAxis(wheelAngle, wheelVisualAxiesRight[i]);
             }
         }
 
@@ -387,7 +387,7 @@ namespace UdonSimpleCars
 
         private float LinearLerp(float currentValue, float targetValue, float speed, float minValue, float maxValue)
         {
-            return Mathf.Clamp(Mathf.Lerp(currentValue, targetValue, speed), minValue, maxValue);
+            return Mathf.Clamp(Mathf.MoveTowards(currentValue, targetValue, speed), minValue, maxValue);
         }
 
         private float CalculateWheelSpeed()
