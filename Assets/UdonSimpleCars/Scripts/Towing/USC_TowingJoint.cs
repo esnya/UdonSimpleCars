@@ -34,7 +34,6 @@ namespace UdonSimpleCars
         #endregion
 
         #region Private Fields
-        private bool initialized = false;
         private GameObject vehicleRoot;
         private Rigidbody parentRigidbody;
         private Vector3 center;
@@ -91,7 +90,6 @@ namespace UdonSimpleCars
             trigger = GetComponent<SphereCollider>();
             center = trigger.center;
             radius = trigger.radius;
-            initialized = true;
         }
 
         private void FixedUpdate()

@@ -9,17 +9,17 @@ namespace UdonSimpleCars
 {
     public class USC_DetachedObjects : MonoBehaviour
     {
+#if UNITY_EDITOR
         private void Reset()
         {
             hideFlags = HideFlags.DontSaveInBuild;
         }
 
-#if UNITY_EDITOR
         private void OnValidate()
         {
             var car = this.GetCar();
 
-            if (car?.detachedObjects != transform)
+            if (car != null && car.detachedObjects != transform)
             {
                 car.detachedObjects = transform;
                 car.ApplyProxyModificationsAndSetDirty();

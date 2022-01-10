@@ -35,6 +35,7 @@ namespace UdonSimpleCars
         [SectionHeader("Others")]
         public Transform steeringWheel;
         public Vector3 steeringWheelAxis = Vector3.forward;
+        public float steeringWheelMaxAngle = 16 * 40;
         public GameObject operatingOnly, inVehicleOnly, driverOnly, backGearOnly, brakingOnly;
 
         [SectionHeader("VR Inputs")]
@@ -81,6 +82,7 @@ namespace UdonSimpleCars
         private Quaternion[] wheelVisualLocalRotations;
         private Vector3[] wheelVisualPositionOffsets, wheelVisualAxiesRight, wheelVisualAxiesUp;
         private bool[] wheelIsSteered;
+        private Quaternion steeringWheelInitialRotation;
         private Rigidbody[] detachedRigidbodies;
         private Matrix4x4[] detachedRigidbodyTransforms;
         private bool _localIsDriver;
@@ -240,6 +242,8 @@ namespace UdonSimpleCars
                 wheelIsSteered[i] = IsWheelSteered(wheel);
             }
 
+            if (steeringWheel) steeringWheelInitialRotation = steeringWheel.localRotation;
+
             if (engineSound != null)
             {
                 engineSound.playOnAwake = true;
@@ -275,11 +279,11 @@ namespace UdonSimpleCars
 
         private void DriverUpdate()
         {
-            var accelerationInput = Input.GetKey(backAccelerationKey) ? -1.0f : (Input.GetKey(accelerationKey) ? 1.0f : (Input.GetAxis(accelerationAxis) * (BackGear ? -1.0f : 1.0f)));
-            var steeringInput = Input.GetKey(steeringKeyLeft) ? -1.0f : (Input.GetKey(steeringKeyRight) ? 1.0f : Input.GetAxis(steeringAxis));
-            var brakeInput = Input.GetKey(brakeKey) ? 1.0f : Input.GetAxis(brakeAxis);
+            var accelerationInput = Input.GetKey(backAccelerationKey) ? -1.0f : (Input.GetKey(accelerationKey) ? 1.0f : (Input.GetAxisRaw(accelerationAxis) * (BackGear ? -1.0f : 1.0f)));
+            var steeringInput = Input.GetKey(steeringKeyLeft) ? -1.0f : (Input.GetKey(steeringKeyRight) ? 1.0f : Input.GetAxisRaw(steeringAxis));
+            var brakeInput = Input.GetKey(brakeKey) ? 1.0f : Input.GetAxisRaw(brakeAxis);
 
-            var backGearInput = Input.GetAxis(backGearAxis);
+            var backGearInput = Input.GetAxisRaw(backGearAxis);
             if (Mathf.Abs(backGearInput) > 0.5f) BackGear = backGearInput < -0.5f;
 
             var deltaTime = Time.deltaTime;
@@ -299,6 +303,11 @@ namespace UdonSimpleCars
         {
             if (!IsOperating) return;
 
+            if (steeringWheel)
+            {
+                steeringWheel.localRotation = steeringWheelInitialRotation * Quaternion.AngleAxis(SteeringValue * steeringWheelMaxAngle, steeringWheelAxis);
+            }
+
             for (var i = 0; i < wheelVisuals.Length; i++)
             {
                 var visual = wheelVisuals[i];
@@ -316,7 +325,7 @@ namespace UdonSimpleCars
                 wheelAngles[i] = wheelAngle;
 
                 var steeringRotation = wheelIsSteered[i] ? Quaternion.AngleAxis(SteeringValue * maxSteeringAngle, wheelVisualAxiesUp[i]) : Quaternion.identity;
-                visual.localRotation = steeringRotation * Quaternion.AngleAxis(wheelAngle, wheelVisualAxiesRight[i]) * wheelVisualLocalRotations[i];
+                visual.localRotation = wheelVisualLocalRotations[i] * steeringRotation * Quaternion.AngleAxis(wheelAngle, wheelVisualAxiesRight[i]);
             }
         }
 
@@ -387,7 +396,7 @@ namespace UdonSimpleCars
 
         private float LinearLerp(float currentValue, float targetValue, float speed, float minValue, float maxValue)
         {
-            return Mathf.Clamp(Mathf.Lerp(currentValue, targetValue, speed), minValue, maxValue);
+            return Mathf.Clamp(Mathf.MoveTowards(currentValue, targetValue, speed), minValue, maxValue);
         }
 
         private float CalculateWheelSpeed()
