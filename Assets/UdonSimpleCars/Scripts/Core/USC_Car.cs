@@ -35,6 +35,7 @@ namespace UdonSimpleCars
         [SectionHeader("Others")]
         public Transform steeringWheel;
         public Vector3 steeringWheelAxis = Vector3.forward;
+        public float steeringWheelMaxAngle = 16 * 40;
         public GameObject operatingOnly, inVehicleOnly, driverOnly, backGearOnly, brakingOnly;
 
         [SectionHeader("VR Inputs")]
@@ -81,6 +82,7 @@ namespace UdonSimpleCars
         private Quaternion[] wheelVisualLocalRotations;
         private Vector3[] wheelVisualPositionOffsets, wheelVisualAxiesRight, wheelVisualAxiesUp;
         private bool[] wheelIsSteered;
+        private Quaternion steeringWheelInitialRotation;
         private Rigidbody[] detachedRigidbodies;
         private Matrix4x4[] detachedRigidbodyTransforms;
         private bool _localIsDriver;
@@ -240,6 +242,8 @@ namespace UdonSimpleCars
                 wheelIsSteered[i] = IsWheelSteered(wheel);
             }
 
+            if (steeringWheel) steeringWheelInitialRotation = steeringWheel.localRotation;
+
             if (engineSound != null)
             {
                 engineSound.playOnAwake = true;
@@ -298,6 +302,11 @@ namespace UdonSimpleCars
         private void LocalUpdate()
         {
             if (!IsOperating) return;
+
+            if (steeringWheel)
+            {
+                steeringWheel.localRotation = steeringWheelInitialRotation * Quaternion.AngleAxis(SteeringValue * steeringWheelMaxAngle, steeringWheelAxis);
+            }
 
             for (var i = 0; i < wheelVisuals.Length; i++)
             {
