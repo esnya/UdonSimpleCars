@@ -30,6 +30,24 @@ MonoBehaviour:
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: True
+  - prefabInstance: {fileID: 867768652620275319, guid: b83f5e71b839ccb42854100226e29fe4,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Core/PassengerSeat
+      (L).prefab
+    udonVariables:
+    - udonInstance: {fileID: 1746256873730171143, guid: b83f5e71b839ccb42854100226e29fe4,
+        type: 3}
+      gameObjectName: PassengerSeat (L)
+      variables:
+      - symbolName: getOutButton
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_Button4
+      - symbolName: getOutKey
+        objectReference: {fileID: 0}
+        value: Return
+      - symbolName: isDriver
+        objectReference: {fileID: 0}
+        value: False
   - prefabInstance: {fileID: 5269387084042503976, guid: 3abb4122a0be6fb479033738f2932fa2,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Core/PassengerSeat
@@ -96,6 +114,58 @@ MonoBehaviour:
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/SampleAssets/UdonSimpleCar.prefab
     udonVariables:
+    - udonInstance: {fileID: 4471492324003861355, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+        type: 3}
+      gameObjectName: DriverSeat
+      variables:
+      - symbolName: getOutButton
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_Button4
+      - symbolName: getOutKey
+        objectReference: {fileID: 0}
+        value: Return
+      - symbolName: isDriver
+        objectReference: {fileID: 0}
+        value: True
+    - udonInstance: {fileID: 3445209583190772268, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+        type: 3}
+      gameObjectName: PassengerSeat (L)
+      variables:
+      - symbolName: getOutButton
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_Button4
+      - symbolName: getOutKey
+        objectReference: {fileID: 0}
+        value: Return
+      - symbolName: isDriver
+        objectReference: {fileID: 0}
+        value: False
+    - udonInstance: {fileID: 8148746232920065977, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+        type: 3}
+      gameObjectName: PassengerSeat (R) (1)
+      variables:
+      - symbolName: getOutButton
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_Button4
+      - symbolName: getOutKey
+        objectReference: {fileID: 0}
+        value: Return
+      - symbolName: isDriver
+        objectReference: {fileID: 0}
+        value: False
+    - udonInstance: {fileID: 2986034748062668817, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+        type: 3}
+      gameObjectName: PassengerSeat (R) (2)
+      variables:
+      - symbolName: getOutButton
+        objectReference: {fileID: 0}
+        value: Oculus_CrossPlatform_Button4
+      - symbolName: getOutKey
+        objectReference: {fileID: 0}
+        value: Return
+      - symbolName: isDriver
+        objectReference: {fileID: 0}
+        value: False
     - udonInstance: {fileID: 8311205895600088590, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: UdonSimpleCar
