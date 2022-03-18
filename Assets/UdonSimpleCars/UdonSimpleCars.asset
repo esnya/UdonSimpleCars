@@ -21,6 +21,9 @@ MonoBehaviour:
         type: 3}
       gameObjectName: DriverSeat
       variables:
+      - symbolName: AdjustSeat
+        objectReference: {fileID: 0}
+        value: True
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
@@ -30,6 +33,10 @@ MonoBehaviour:
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: True
+      - symbolName: TargetEyePosition
+        objectReference: {fileID: 5589825168805251761, guid: 06526237862500e42bc60720a296c08c,
+          type: 3}
+        value: TargetEyePosition (UnityEngine.Transform)
   - prefabInstance: {fileID: 867768652620275319, guid: b83f5e71b839ccb42854100226e29fe4,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Core/PassengerSeat
@@ -39,6 +46,9 @@ MonoBehaviour:
         type: 3}
       gameObjectName: PassengerSeat (L)
       variables:
+      - symbolName: AdjustSeat
+        objectReference: {fileID: 0}
+        value: True
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
@@ -48,6 +58,10 @@ MonoBehaviour:
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+      - symbolName: TargetEyePosition
+        objectReference: {fileID: 4319119116696257167, guid: b83f5e71b839ccb42854100226e29fe4,
+          type: 3}
+        value: TargetEyePosition (UnityEngine.Transform)
   - prefabInstance: {fileID: 5269387084042503976, guid: 3abb4122a0be6fb479033738f2932fa2,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Core/PassengerSeat
@@ -57,6 +71,9 @@ MonoBehaviour:
         type: 3}
       gameObjectName: PassengerSeat (R)
       variables:
+      - symbolName: AdjustSeat
+        objectReference: {fileID: 0}
+        value: True
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
@@ -66,6 +83,10 @@ MonoBehaviour:
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+      - symbolName: TargetEyePosition
+        objectReference: {fileID: 9140872021914393552, guid: 3abb4122a0be6fb479033738f2932fa2,
+          type: 3}
+        value: TargetEyePosition (UnityEngine.Transform)
   - prefabInstance: {fileID: 1300906920318284338, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Towing/TowingJoint.prefab
@@ -118,6 +139,9 @@ MonoBehaviour:
         type: 3}
       gameObjectName: DriverSeat
       variables:
+      - symbolName: AdjustSeat
+        objectReference: {fileID: 0}
+        value: True
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
@@ -127,10 +151,17 @@ MonoBehaviour:
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: True
+      - symbolName: TargetEyePosition
+        objectReference: {fileID: 195723459607330267, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+          type: 3}
+        value: TargetEyePosition (UnityEngine.Transform)
     - udonInstance: {fileID: 3445209583190772268, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: PassengerSeat (L)
       variables:
+      - symbolName: AdjustSeat
+        objectReference: {fileID: 0}
+        value: True
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
@@ -140,10 +171,17 @@ MonoBehaviour:
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+      - symbolName: TargetEyePosition
+        objectReference: {fileID: 866014325584259492, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+          type: 3}
+        value: TargetEyePosition (UnityEngine.Transform)
     - udonInstance: {fileID: 8148746232920065977, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: PassengerSeat (R) (1)
       variables:
+      - symbolName: AdjustSeat
+        objectReference: {fileID: 0}
+        value: True
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
@@ -153,10 +191,17 @@ MonoBehaviour:
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+      - symbolName: TargetEyePosition
+        objectReference: {fileID: 5971013525659853873, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+          type: 3}
+        value: TargetEyePosition (UnityEngine.Transform)
     - udonInstance: {fileID: 2986034748062668817, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: PassengerSeat (R) (2)
       variables:
+      - symbolName: AdjustSeat
+        objectReference: {fileID: 0}
+        value: True
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
@@ -166,6 +211,10 @@ MonoBehaviour:
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+      - symbolName: TargetEyePosition
+        objectReference: {fileID: 773460681444653977, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+          type: 3}
+        value: TargetEyePosition (UnityEngine.Transform)
     - udonInstance: {fileID: 8311205895600088590, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: UdonSimpleCar
