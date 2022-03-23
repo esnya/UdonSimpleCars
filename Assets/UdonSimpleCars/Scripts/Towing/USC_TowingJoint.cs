@@ -173,12 +173,12 @@ namespace UdonSimpleCars
             prevJointPosition = jointPosition;
 
             var connectedAnchorPositon = _connectedAnchor.transform.position;
-            var relativePosition = -transform.InverseTransformPoint(connectedAnchorPositon);
+            var relativePosition = Vector3.ProjectOnPlane(-transform.InverseTransformPoint(connectedAnchorPositon), Vector3.up);
 
             var distance = relativePosition.magnitude;
             if (distance > breakingDistance) return false;
 
-            if (distance > wakeUpDistance * wakeUpDistance) WakeUp();
+            if (distance > wakeUpDistance) WakeUp();
 
             force = relativePosition * spring + (relativePosition - prevRelativePosition) * damping;
             ConnectedAnchor_VehicleRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(transform.TransformVector(force), maxAcceleration) * Time.fixedDeltaTime, connectedAnchorPositon, ForceMode.Acceleration);
