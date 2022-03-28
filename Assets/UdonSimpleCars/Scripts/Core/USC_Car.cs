@@ -85,6 +85,7 @@ namespace UdonSimpleCars
         private Quaternion steeringWheelInitialRotation;
         private Rigidbody[] detachedRigidbodies;
         private Matrix4x4[] detachedRigidbodyTransforms;
+        private VRCObjectSync[] detachedObjecySyncs;
         private bool _localIsDriver;
         private bool LocalIsDriver
         {
@@ -268,6 +269,8 @@ namespace UdonSimpleCars
                     var rigidbody = detachedRigidbodies[i];
                     detachedRigidbodyTransforms[i] = transform.worldToLocalMatrix * rigidbody.transform.localToWorldMatrix;
                 }
+
+                detachedObjecySyncs = (VRCObjectSync[])detachedObjects.GetComponentsInChildren(typeof(VRCObjectSync), true);
             }
         }
 
@@ -329,6 +332,17 @@ namespace UdonSimpleCars
             }
         }
 
+        public override void OnOwnershipTransferred(VRCPlayerApi player)
+        {
+            if (player.isLocal)
+            {
+                if (detachedObjects)
+                {
+                    foreach (var sync in detachedObjecySyncs) Networking.SetOwner(player, sync.gameObject);
+                }
+            }
+        }
+
         public void OnRespawned()
         {
             if (detachedRigidbodies != null)
@@ -344,6 +358,7 @@ namespace UdonSimpleCars
                 }
             }
         }
+
 
         public void _OnEnteredAsDriver()
         {
