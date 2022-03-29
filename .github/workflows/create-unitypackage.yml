@@ -48,13 +48,13 @@ jobs:
           path: node_modules
           key: ${{runner.os}}-node_modules
       - name: Install dependencies
-        run: npm install semantic-release @semantic-release/github @semantic-release/exec semantic-release-gitmoji
+        run: npm install -D semantic-release @semantic-release/github @semantic-release/exec semantic-release-gitmoji
+
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
           path: dist/
-      - run: |
-          echo '{"plugins": ["semantic-release-gitmoji", ["@semantic-release/exec", {"verifyReleaseCmd": "./.github/scripts/before-release.sh ${nextRelease.version}"}],["@semantic-release/github",{"assets": {"path": "dist/"}}]]}' > .releaserc.json
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
