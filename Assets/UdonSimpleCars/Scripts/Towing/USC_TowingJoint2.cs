@@ -29,6 +29,7 @@ namespace UdonSimpleCars
         private AudioSource audioSource;
         private Rigidbody jointRigidbody;
         private GameObject vehicleRoot;
+        private float initialJointMass;
 
         private GameObject ownerDetector;
         private Rigidbody connectedRigidbody;
@@ -52,8 +53,7 @@ namespace UdonSimpleCars
                 connectedRigidbody = value ? value.vehicleRigidbody : null;
                 connectedWheelCollider = value ? value.attachedWheelCollider : null;
 
-                ConnectedMass = connectedRigidbody ? connectedRigidbody.mass : 0;
-
+                ConnectedMass = connectedRigidbody ? connectedRigidbody.mass : initialJointMass;
             }
             get => _connectedAnchor;
         }
@@ -77,7 +77,6 @@ namespace UdonSimpleCars
         {
             set
             {
-                jointRigidbody.mass = value;
                 _connectedMass = value;
             }
             get => _connectedMass;
@@ -88,6 +87,8 @@ namespace UdonSimpleCars
             audioSource = GetComponent<AudioSource>();
             jointRigidbody = GetComponent<Rigidbody>();
             vehicleRoot = GetComponentInParent<USC_Car>().gameObject;
+
+            initialJointMass = jointRigidbody.mass;
 
             ConnectedAnchor = null;
         }
@@ -120,6 +121,12 @@ namespace UdonSimpleCars
                         WakeUpWheels();
                     }
                 }
+            }
+
+            var currentJointMass = jointRigidbody.mass;
+            if (!Mathf.Approximately(currentJointMass, ConnectedMass))
+            {
+                jointRigidbody.mass = Mathf.MoveTowards(currentJointMass, ConnectedMass, Time.fixedDeltaTime);
             }
         }
 
