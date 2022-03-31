@@ -9,6 +9,7 @@ using UdonSharpEditor;
 
 namespace UdonSimpleCars
 {
+    [DefaultExecutionOrder(-100)] // Before USC_Car
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(SphereCollider))]
@@ -149,12 +150,14 @@ namespace UdonSimpleCars
 
         private void WakeUpWheels()
         {
+            if (!connectedRigidbody) return;
             foreach (var wheel in connectedRigidbody.GetComponentsInChildren<WheelCollider>()) wheel.motorTorque = 1f;
             SendCustomEventDelayedSeconds(nameof(_ResetTorque), 1.0f);
         }
 
         public void _ResetTorque()
         {
+            if (!connectedRigidbody) return;
             foreach (var wheel in connectedRigidbody.GetComponentsInChildren<WheelCollider>()) wheel.motorTorque = 0;
         }
 

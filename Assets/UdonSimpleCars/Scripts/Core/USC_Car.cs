@@ -238,7 +238,7 @@ namespace UdonSimpleCars
                 var wheel = wheels[i];
                 var wheelTransform = wheel.transform;
 
-                var visual = i < wheelVisuals.Length ? wheelVisuals[i] : null;
+                var visual = (wheelVisuals != null && i < wheelVisuals.Length) ? wheelVisuals[i] : null;
                 if (visual != null)
                 {
                     wheelVisualPositionOffsets[i] = wheelTransform.InverseTransformPoint(visual.position) + Vector3.up * wheel.suspensionDistance * wheel.suspensionSpring.targetPosition;
