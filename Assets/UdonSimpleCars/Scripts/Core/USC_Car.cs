@@ -268,6 +268,7 @@ namespace UdonSimpleCars
 
             if (detachedObjects)
             {
+                detachedObjects.name = $"{gameObject.name}_{detachedObjects.name}";
                 detachedObjects.SetParent(transform.parent, true);
                 detachedRigidbodies = detachedObjects.GetComponentsInChildren<Rigidbody>();
                 detachedRigidbodyTransforms = new Matrix4x4[detachedRigidbodies.Length];
