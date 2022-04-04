@@ -121,6 +121,9 @@ MonoBehaviour:
       - symbolName: spring
         objectReference: {fileID: 0}
         value: 10
+      - symbolName: wakeUpDistance
+        objectReference: {fileID: 0}
+        value: 0.5
   - prefabInstance: {fileID: 8311205895600088585, guid: fdec5079b5262f6419ce6e58b22b3cd2,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/SampleAssets/UdonSimpleCar.prefab
