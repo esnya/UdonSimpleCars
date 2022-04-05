@@ -128,12 +128,12 @@ namespace UdonSimpleCars
                         WakeUpWheels();
                     }
                 }
-            }
 
-            var currentJointMass = jointRigidbody.mass;
-            if (!Mathf.Approximately(currentJointMass, ConnectedMass))
-            {
-                jointRigidbody.mass = Mathf.MoveTowards(currentJointMass, ConnectedMass, Time.fixedDeltaTime);
+                var currentJointMass = jointRigidbody.mass;
+                if (!Mathf.Approximately(currentJointMass, ConnectedMass))
+                {
+                    jointRigidbody.mass = Mathf.MoveTowards(currentJointMass, ConnectedMass, Time.fixedDeltaTime);
+                }
             }
         }
 
@@ -198,6 +198,7 @@ namespace UdonSimpleCars
 
         private void OnDisconnected()
         {
+            jointRigidbody.mass = initialJointMass;
             PlayOneShot(onDisconnectedSound);
         }
 
