@@ -14,7 +14,7 @@ namespace UdonSimpleCars
         private Transform parent;
         private Vector3 localPosition;
 
-        private void OnEnabled()
+        private void OnEnable()
         {
             SendCustomEventDelayedSeconds(nameof(_LateThinUpdate), Random.Range(Time.fixedUnscaledDeltaTime, updateInterval), EventTiming.LateUpdate);
         }
