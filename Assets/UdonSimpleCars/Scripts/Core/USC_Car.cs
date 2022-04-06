@@ -283,6 +283,7 @@ namespace UdonSimpleCars
                 }
 
                 detachedObjecySyncs = (VRCObjectSync[])detachedObjects.GetComponentsInChildren(typeof(VRCObjectSync), true);
+                detachedWheels = detachedObjects.GetComponentsInChildren<WheelCollider>(true);
             }
         }
 
