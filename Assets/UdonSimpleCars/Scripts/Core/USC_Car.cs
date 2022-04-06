@@ -71,12 +71,14 @@ namespace UdonSimpleCars
         public WheelCollider[] drivingWheels = { };
         public WheelCollider[] brakeWheels = { };
         // public WheelCollider[] parkingBrakeWheels = {};
+        public WheelCollider[] detachedWheels = { };
         public Transform[] wheelVisuals = { };
 
         [SectionHeader("Others")]
         [Tooltip("Reparented under parent of the vehicle on Start. Resets positions on respawns.")] public Transform detachedObjects;
 
         private Animator animator;
+        private Rigidbody vehicleRigidbody;
         private int wheelCount;
         private float[] wheelAngles;
         private Quaternion[] wheelVisualLocalRotations;
@@ -86,6 +88,7 @@ namespace UdonSimpleCars
         private Rigidbody[] detachedRigidbodies;
         private Matrix4x4[] detachedRigidbodyTransforms;
         private VRCObjectSync[] detachedObjecySyncs;
+        private float prevSpeed;
         private bool _localIsDriver;
         private bool LocalIsDriver
         {
@@ -223,6 +226,7 @@ namespace UdonSimpleCars
 
         private void Start()
         {
+            vehicleRigidbody = GetComponent<Rigidbody>();
             animator = GetComponentInParent<Animator>();
 
             wheelCount = wheels.Length;
@@ -308,6 +312,21 @@ namespace UdonSimpleCars
             foreach (var wheel in brakeWheels) wheel.brakeTorque = BrakeValue * brakeTorque;
 
             wheelSpeed = CalculateWheelSpeed();
+
+            var speed = vehicleRigidbody.velocity.magnitude;
+            if (prevSpeed <= 0.02f && speed > 0.02f)
+            {
+                Debug.Log("Sticky Wheel Collider Fix (Set)");
+                foreach (var wheel in detachedWheels) wheel.motorTorque = 0.01f;
+                SendCustomEventDelayedSeconds(nameof(ResetDetachedWheelsTorque), 1.0f);
+            }
+            prevSpeed = speed;
+        }
+
+        public void ResetDetachedWheelsTorque()
+        {
+            Debug.Log("Sticky Wheel Collider Fix (Reset)");
+            foreach (var wheel in detachedWheels) wheel.motorTorque = 0.0f;
         }
 
         private void LocalUpdate()

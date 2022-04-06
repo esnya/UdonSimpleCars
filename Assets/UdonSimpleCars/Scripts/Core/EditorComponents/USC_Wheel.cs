@@ -64,6 +64,11 @@ namespace UdonSimpleCars
                 if (change.changed)
                 {
                     car.wheels = wheels;
+
+                    if (car.detachedObjects)
+                    {
+                        car.detachedWheels = car.detachedObjects.GetComponentsInChildren<USC_Wheel>(true).Select(w => w.GetComponent<WheelCollider>()).ToArray();
+                    }
                 }
             }
         }
