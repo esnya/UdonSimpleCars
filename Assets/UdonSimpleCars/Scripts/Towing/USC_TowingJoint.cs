@@ -78,6 +78,9 @@ namespace UdonSimpleCars
 
         [UdonSynced][FieldChangeCallback(nameof(ConnectedMass))] private float _connectedMass;
         private SphereCollider trigger;
+        private Vector3 prevPosition;
+        private float prevSpeed;
+        private bool prevStartMoving;
 
         private float ConnectedMass
         {
@@ -123,10 +126,20 @@ namespace UdonSimpleCars
                         connectedWheelCollider.steerAngle = Vector3.SignedAngle(connectedRigidbody.transform.forward, transform.forward, Vector3.up);
                     }
 
-                    if (anchorToJoint.magnitude > wakeUpDistance && connectedVelocity.magnitude < 0.1f)
+                    var position = transform.position;
+                    var speed = Vector3.Distance(position, prevPosition) / Time.fixedDeltaTime;
+                    prevPosition = position;
+                    var startMoving = Mathf.Approximately(prevSpeed, 0) && speed > 0;
+                    if (startMoving)
                     {
-                        WakeUpWheels();
+                        SetConnectedWheelsMotorTorque(1.0e-36f);
                     }
+                    else if (prevStartMoving)
+                    {
+                        SetConnectedWheelsMotorTorque(0);
+                    }
+                    prevSpeed = speed;
+                    prevStartMoving = startMoving;
                 }
 
                 var currentJointMass = jointRigidbody.mass;
@@ -154,17 +167,10 @@ namespace UdonSimpleCars
             SendCustomNetworkEvent(NetworkEventTarget.Owner, nameof(Disconnect));
         }
 
-        private void WakeUpWheels()
+        private void SetConnectedWheelsMotorTorque(float value)
         {
             if (!connectedRigidbody) return;
-            foreach (var wheel in connectedRigidbody.GetComponentsInChildren<WheelCollider>()) wheel.motorTorque = 1f;
-            SendCustomEventDelayedSeconds(nameof(_ResetTorque), 1.0f);
-        }
-
-        public void _ResetTorque()
-        {
-            if (!connectedRigidbody) return;
-            foreach (var wheel in connectedRigidbody.GetComponentsInChildren<WheelCollider>()) wheel.motorTorque = 0;
+            foreach (var wheel in connectedRigidbody.GetComponentsInChildren<WheelCollider>()) wheel.motorTorque = value;
         }
 
         private void Connect(USC_TowingAnchor targetAncor)

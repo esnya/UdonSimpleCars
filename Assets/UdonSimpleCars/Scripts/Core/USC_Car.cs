@@ -89,6 +89,7 @@ namespace UdonSimpleCars
         private Matrix4x4[] detachedRigidbodyTransforms;
         private VRCObjectSync[] detachedObjecySyncs;
         private float prevSpeed;
+        private bool prevStartMoving;
         private bool _localIsDriver;
         private bool LocalIsDriver
         {
@@ -315,19 +316,17 @@ namespace UdonSimpleCars
             wheelSpeed = CalculateWheelSpeed();
 
             var speed = vehicleRigidbody.velocity.magnitude;
-            if (prevSpeed <= 0.02f && speed > 0.02f)
+            var startMoving = Mathf.Approximately(prevSpeed, 0) && speed > 0;
+            if (startMoving)
             {
-                Debug.Log("Sticky Wheel Collider Fix (Set)");
-                foreach (var wheel in detachedWheels) wheel.motorTorque = 0.01f;
-                SendCustomEventDelayedSeconds(nameof(ResetDetachedWheelsTorque), 1.0f);
+                SetDetachedWheelsMotorTorque(1.0e-36f);
+            }
+            else if (prevStartMoving)
+            {
+                SetDetachedWheelsMotorTorque(0);
             }
             prevSpeed = speed;
-        }
-
-        public void ResetDetachedWheelsTorque()
-        {
-            Debug.Log("Sticky Wheel Collider Fix (Reset)");
-            foreach (var wheel in detachedWheels) wheel.motorTorque = 0.0f;
+            prevStartMoving = startMoving;
         }
 
         private void LocalUpdate()
@@ -402,6 +401,7 @@ namespace UdonSimpleCars
 
             BackGear = false;
             IsOperating = true;
+
         }
 
         public void _OnEnteredAsPassenger()
@@ -416,6 +416,8 @@ namespace UdonSimpleCars
                 AccelerationValue = 0;
                 LocalIsDriver = false;
                 IsOperating = false;
+
+                SetDetachedWheelsMotorTorque(0);
             }
             LocalInVehicle = false;
         }
@@ -441,6 +443,12 @@ namespace UdonSimpleCars
             IsOperating = false;
 
             SendCustomNetworkEvent(NetworkEventTarget.All, nameof(OnRespawned));
+        }
+
+        private void SetDetachedWheelsMotorTorque(float value)
+        {
+            if (!detachedObjects) return;
+            foreach (var wheel in detachedWheels) wheel.motorTorque = value;
         }
 
         private float LinearLerp(float currentValue, float targetValue, float speed, float minValue, float maxValue)

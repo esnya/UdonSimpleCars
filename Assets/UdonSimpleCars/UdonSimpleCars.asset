@@ -208,6 +208,14 @@ MonoBehaviour:
         objectReference: {fileID: 773460681444653977, guid: fdec5079b5262f6419ce6e58b22b3cd2,
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
+    - udonInstance: {fileID: 3247081696457951111, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+        type: 3}
+      gameObjectName: Respawner
+      variables:
+      - symbolName: target
+        objectReference: {fileID: 8311205895600088590, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+          type: 3}
+        value: UdonSimpleCar (VRC.Udon.UdonBehaviour)
     - udonInstance: {fileID: 8311205895600088590, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: UdonSimpleCar
@@ -318,6 +326,9 @@ MonoBehaviour:
       - symbolName: steeringWheelAxis
         objectReference: {fileID: 0}
         value: (0.0, 0.0, 1.0)
+      - symbolName: steeringWheelMaxAngle
+        objectReference: {fileID: 0}
+        value: 640
       - symbolName: steeringWheels
         objectReference: {fileID: 0}
         value: UnityEngine.WheelCollider[]
