@@ -27,6 +27,7 @@ namespace UdonSimpleCars
         [Range(0, 10)] public float brakeResponse = 1f;
         public float maxSteeringAngle = 40.0f;
         [Range(0, 10)] public float steeringResponse = 1f;
+        public Transform centerOfMass;
 
         [SectionHeader("Sounds")]
         public AudioSource engineSound;
@@ -289,6 +290,8 @@ namespace UdonSimpleCars
                 detachedObjecySyncs = (VRCObjectSync[])detachedObjects.GetComponentsInChildren(typeof(VRCObjectSync), true);
                 detachedWheels = detachedObjects.GetComponentsInChildren<WheelCollider>(true);
             }
+
+            if (centerOfMass) vehicleRigidbody.centerOfMass = transform.InverseTransformPoint(centerOfMass.position);
         }
 
         private void Update()
