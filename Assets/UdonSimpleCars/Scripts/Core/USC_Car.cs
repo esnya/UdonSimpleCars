@@ -66,17 +66,19 @@ namespace UdonSimpleCars
 
         [SectionHeader("Wheels")]
         [HelpBox("Managed by USC_Wheel(s)")]
-        public WheelCollider[] wheels = {};
-        public WheelCollider[] steeredWheels = {};
-        public WheelCollider[] drivingWheels = {};
-        public WheelCollider[] brakeWheels = {};
+        public WheelCollider[] wheels = { };
+        public WheelCollider[] steeredWheels = { };
+        public WheelCollider[] drivingWheels = { };
+        public WheelCollider[] brakeWheels = { };
         // public WheelCollider[] parkingBrakeWheels = {};
-        public Transform[] wheelVisuals = {};
+        public WheelCollider[] detachedWheels = { };
+        public Transform[] wheelVisuals = { };
 
         [SectionHeader("Others")]
         [Tooltip("Reparented under parent of the vehicle on Start. Resets positions on respawns.")] public Transform detachedObjects;
 
         private Animator animator;
+        private Rigidbody vehicleRigidbody;
         private int wheelCount;
         private float[] wheelAngles;
         private Quaternion[] wheelVisualLocalRotations;
@@ -85,6 +87,9 @@ namespace UdonSimpleCars
         private Quaternion steeringWheelInitialRotation;
         private Rigidbody[] detachedRigidbodies;
         private Matrix4x4[] detachedRigidbodyTransforms;
+        private VRCObjectSync[] detachedObjecySyncs;
+        private float prevSpeed;
+        private bool prevStartMoving;
         private bool _localIsDriver;
         private bool LocalIsDriver
         {
@@ -111,8 +116,10 @@ namespace UdonSimpleCars
         }
         [UdonSynced(UdonSyncMode.Smooth)] private float wheelSpeed;
         [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(AccelerationValue))] private float _accelerationValue;
-        private float AccelerationValue {
-            set {
+        private float AccelerationValue
+        {
+            set
+            {
                 _accelerationValue = value;
 
                 if (IsOperating)
@@ -138,8 +145,10 @@ namespace UdonSimpleCars
             get => _accelerationValue;
         }
         [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(BrakeValue))] private float _brakeValue;
-        private float BrakeValue {
-            set {
+        private float BrakeValue
+        {
+            set
+            {
                 _brakeValue = value;
 
                 if (animator != null && IsOperating)
@@ -151,14 +160,16 @@ namespace UdonSimpleCars
 
                 if (LocalIsDriver)
                 {
-                     foreach (var wheel in brakeWheels) wheel.brakeTorque = value * brakeTorque / brakeWheels.Length;
+                    foreach (var wheel in brakeWheels) wheel.brakeTorque = value * brakeTorque / brakeWheels.Length;
                 }
             }
             get => _brakeValue;
         }
         [UdonSynced(UdonSyncMode.Smooth), FieldChangeCallback(nameof(SteeringValue))] private float _steeringValue;
-        private float SteeringValue {
-            set {
+        private float SteeringValue
+        {
+            set
+            {
                 _steeringValue = value;
 
                 if (animator != null && IsOperating)
@@ -168,7 +179,7 @@ namespace UdonSimpleCars
 
                 if (LocalIsDriver)
                 {
-                    foreach (var wheel in steeredWheels) wheel.steerAngle = value * maxSteeringAngle/ steeredWheels.Length;
+                    foreach (var wheel in steeredWheels) wheel.steerAngle = value * maxSteeringAngle / steeredWheels.Length;
                 }
             }
             get => _steeringValue;
@@ -208,13 +219,15 @@ namespace UdonSimpleCars
             get => _gear;
         }
 
-        private bool BackGear {
+        private bool BackGear
+        {
             set => Gear = value ? GEAR_BACK : GEAR_DRIVE;
             get => Gear == GEAR_BACK;
         }
 
         private void Start()
         {
+            vehicleRigidbody = GetComponent<Rigidbody>();
             animator = GetComponentInParent<Animator>();
 
             wheelCount = wheels.Length;
@@ -230,7 +243,7 @@ namespace UdonSimpleCars
                 var wheel = wheels[i];
                 var wheelTransform = wheel.transform;
 
-                var visual = i < wheelVisuals.Length ? wheelVisuals[i] : null;
+                var visual = (wheelVisuals != null && i < wheelVisuals.Length) ? wheelVisuals[i] : null;
                 if (visual != null)
                 {
                     wheelVisualPositionOffsets[i] = wheelTransform.InverseTransformPoint(visual.position) + Vector3.up * wheel.suspensionDistance * wheel.suspensionSpring.targetPosition;
@@ -260,6 +273,7 @@ namespace UdonSimpleCars
 
             if (detachedObjects)
             {
+                detachedObjects.name = $"{gameObject.name}_{detachedObjects.name}";
                 detachedObjects.SetParent(transform.parent, true);
                 detachedRigidbodies = detachedObjects.GetComponentsInChildren<Rigidbody>();
                 detachedRigidbodyTransforms = new Matrix4x4[detachedRigidbodies.Length];
@@ -268,6 +282,9 @@ namespace UdonSimpleCars
                     var rigidbody = detachedRigidbodies[i];
                     detachedRigidbodyTransforms[i] = transform.worldToLocalMatrix * rigidbody.transform.localToWorldMatrix;
                 }
+
+                detachedObjecySyncs = (VRCObjectSync[])detachedObjects.GetComponentsInChildren(typeof(VRCObjectSync), true);
+                detachedWheels = detachedObjects.GetComponentsInChildren<WheelCollider>(true);
             }
         }
 
@@ -297,6 +314,19 @@ namespace UdonSimpleCars
             foreach (var wheel in brakeWheels) wheel.brakeTorque = BrakeValue * brakeTorque;
 
             wheelSpeed = CalculateWheelSpeed();
+
+            var speed = vehicleRigidbody.velocity.magnitude;
+            var startMoving = Mathf.Approximately(prevSpeed, 0) && speed > 0;
+            if (startMoving)
+            {
+                SetDetachedWheelsMotorTorque(1.0e-36f);
+            }
+            else if (prevStartMoving)
+            {
+                SetDetachedWheelsMotorTorque(0);
+            }
+            prevSpeed = speed;
+            prevStartMoving = startMoving;
         }
 
         private void LocalUpdate()
@@ -321,7 +351,7 @@ namespace UdonSimpleCars
                 wheel.GetWorldPose(out position, out rotation);
                 visual.position = wheelTransform.TransformPoint(wheelTransform.InverseTransformPoint(position) + wheelVisualPositionOffsets[i]);
 
-                var wheelAngle = wheelAngles[i] + (LocalIsDriver ? wheel.rpm : wheelSpeed * wheel.radius) * Time.deltaTime  * (360.0f / 60.0f);
+                var wheelAngle = wheelAngles[i] + (LocalIsDriver ? wheel.rpm : wheelSpeed * wheel.radius) * Time.deltaTime * (360.0f / 60.0f);
                 wheelAngles[i] = wheelAngle;
 
                 var steeringRotation = wheelIsSteered[i] ? Quaternion.AngleAxis(SteeringValue * maxSteeringAngle, wheelVisualAxiesUp[i]) : Quaternion.identity;
@@ -329,8 +359,25 @@ namespace UdonSimpleCars
             }
         }
 
+        public override void OnOwnershipTransferred(VRCPlayerApi player)
+        {
+            if (player.isLocal)
+            {
+                if (detachedObjects)
+                {
+                    foreach (var sync in detachedObjecySyncs) Networking.SetOwner(player, sync.gameObject);
+                }
+            }
+        }
+
         public void OnRespawned()
         {
+            foreach (var rigidbody in GetComponentsInChildren<Rigidbody>())
+            {
+                rigidbody.velocity = Vector3.zero;
+                rigidbody.angularVelocity = Vector3.zero;
+            }
+
             if (detachedRigidbodies != null)
             {
                 for (var i = 0; i < detachedRigidbodies.Length; i++)
@@ -345,6 +392,7 @@ namespace UdonSimpleCars
             }
         }
 
+
         public void _OnEnteredAsDriver()
         {
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
@@ -353,6 +401,7 @@ namespace UdonSimpleCars
 
             BackGear = false;
             IsOperating = true;
+
         }
 
         public void _OnEnteredAsPassenger()
@@ -367,6 +416,8 @@ namespace UdonSimpleCars
                 AccelerationValue = 0;
                 LocalIsDriver = false;
                 IsOperating = false;
+
+                SetDetachedWheelsMotorTorque(0);
             }
             LocalInVehicle = false;
         }
@@ -392,6 +443,12 @@ namespace UdonSimpleCars
             IsOperating = false;
 
             SendCustomNetworkEvent(NetworkEventTarget.All, nameof(OnRespawned));
+        }
+
+        private void SetDetachedWheelsMotorTorque(float value)
+        {
+            if (!detachedObjects) return;
+            foreach (var wheel in detachedWheels) wheel.motorTorque = value;
         }
 
         private float LinearLerp(float currentValue, float targetValue, float speed, float minValue, float maxValue)

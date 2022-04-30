@@ -1,6 +1,4 @@
-﻿
 using UdonSharp;
-using UdonToolkit;
 using UnityEngine;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
@@ -11,261 +9,208 @@ using UdonSharpEditor;
 
 namespace UdonSimpleCars
 {
-    [DefaultExecutionOrder(100)] // After Engine Controller
-    [UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
+    [DefaultExecutionOrder(-100)] // Before USC_Car
+    [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(SphereCollider))]
+    [RequireComponent(typeof(AudioSource))]
     public class USC_TowingJoint : UdonSharpBehaviour
     {
-        #region Public Fields
-        [SectionHeader("Anchor")]
-        public LayerMask anchorLayers = -1;
-        public float spring = 500.0f;
-        public float damping = 100000.0f;
-        public float maxAcceleration = 2000.0f;
-        public float massScale = 1.0f;
-        public float wakeUpDistance = 1.0f;
+        public float maxAcceleration = 20.0f;
+        public float spring = 10.0f;
+        public float damper = 10.0f;
+        public float minSteeringSpeed = 1.0f;
         public float breakingDistance = 10.0f;
-        public float reconnectionDelay = 5.0f;
+        public float reconnectionDelay = 10;
+        public float wakeUpDistance = 0.5f;
 
-        [SectionHeader("Sounds")]
-        public AudioSource audioSource;
-        public AudioClip onConnected, onDisconnected;
-        #endregion
+        [Space]
+        public AudioClip onConnectedSound;
+        public AudioClip onDisconnectedSound;
 
-        #region Private Fields
+        private AudioSource audioSource;
+        private Rigidbody jointRigidbody;
         private GameObject vehicleRoot;
-        private Rigidbody parentRigidbody;
-        private Vector3 center;
-        private float radius;
-        private USC_TowingAnchor _connectedAnchor;
-        private Vector3 prevRelativePosition;
-        private Collider[] colliders;
-        private Vector3 jointVelocity, prevJointPosition;
-        private SphereCollider trigger;
-        private float reconnectableTime;
-        #endregion
+        private float initialJointMass;
 
-        #region Properties
+        private GameObject ownerDetector;
+        private Rigidbody connectedRigidbody;
+        private Transform connectedTransform;
+        private WheelCollider connectedWheelCollider;
+        private USC_TowingAnchor _connectedAnchor;
         private USC_TowingAnchor ConnectedAnchor
         {
             set
             {
-                _connectedAnchor = value;
-                if (value != null)
+                if (!value && connectedWheelCollider)
                 {
-                    ConnectedAnchor_Transform = value.transform;
-                    ConnectedAnchor_OwnerDetector = value.ownerDetector;
-                    ConnectedAnchor_VehicleRigidbody = value.vehicleRigidbody;
-                    ConnectedAnchor_AttachedWheelCollider = value.attachedWheelCollider;
+                    connectedWheelCollider.steerAngle = 0;
                 }
+                _connectedAnchor = value;
+
+                Connected = value != null;
+                connectedTransform = value ? value.transform : null;
+
+                ownerDetector = value ? value.ownerDetector : null;
+                connectedRigidbody = value ? value.vehicleRigidbody : null;
+                connectedWheelCollider = value ? value.attachedWheelCollider : null;
+
+                ConnectedMass = connectedRigidbody ? connectedRigidbody.mass : initialJointMass;
             }
             get => _connectedAnchor;
         }
-        // Local Cache
-        private Transform ConnectedAnchor_Transform;
-        private GameObject ConnectedAnchor_OwnerDetector;
-        private Rigidbody ConnectedAnchor_VehicleRigidbody;
-        private WheelCollider ConnectedAnchor_AttachedWheelCollider;
 
-        private bool IsAnchorOwner => isConnected && ConnectedAnchor != null;
-        private bool IsVehicleOwner => isConnected && Networking.IsOwner(vehicleRoot);
-        #endregion
+        private float reconnectableTime;
+        [UdonSynced][FieldChangeCallback(nameof(Connected))] private bool _connected;
+        private bool Connected
+        {
+            set
+            {
+                if (value != _connected)
+                {
+                    if (value) OnConnected();
+                    else OnDisconnected();
+                }
+                _connected = value;
+            }
+            get => _connected;
+        }
 
-        #region Synced Varibles
-        [UdonSynced] bool isConnected;
-        [UdonSynced(UdonSyncMode.Smooth)] Vector3 force;
-        #endregion
+        [UdonSynced][FieldChangeCallback(nameof(ConnectedMass))] private float _connectedMass;
+        private SphereCollider trigger;
+        private Vector3 prevPosition;
+        private float prevSpeed;
+        private bool prevStartMoving;
 
-        #region Unity Events
+        private float ConnectedMass
+        {
+            set
+            {
+                _connectedMass = value;
+            }
+            get => _connectedMass;
+        }
+
         private void Start()
         {
-            ConnectedAnchor = null;
-
-            parentRigidbody = transform.parent.GetComponentInParent<Rigidbody>();
-            var objectSync = (VRCObjectSync)GetComponentInParent(typeof(VRCObjectSync));
-            if (objectSync != null) vehicleRoot = objectSync.gameObject;
-            if (vehicleRoot == null) vehicleRoot = gameObject;
-
+            audioSource = GetComponent<AudioSource>();
+            jointRigidbody = GetComponent<Rigidbody>();
+            vehicleRoot = GetComponentInParent<USC_Car>().gameObject;
             trigger = GetComponent<SphereCollider>();
-            center = trigger.center;
-            radius = trigger.radius;
+
+            initialJointMass = jointRigidbody.mass;
+
+            ConnectedAnchor = null;
         }
 
         private void FixedUpdate()
         {
-            if (!isConnected) return;
-
-            if (IsAnchorOwner)
+            if (ConnectedAnchor != null)
             {
-                var connected = AnchorOwnerUpdate();
-                if (!connected) SendCustomNetworkEvent(NetworkEventTarget.All, nameof(Disconnect));
+                var anchorPosition = connectedTransform.position;
+                var anchorToJoint = anchorPosition - transform.position;
+
+                var anchorDistance = anchorToJoint.magnitude;
+                if (!Networking.IsOwner(ownerDetector) || anchorDistance > breakingDistance)
+                {
+                    Disconnect();
+                }
+                else
+                {
+                    var jointVelocity = jointRigidbody.velocity;
+                    var connectedVelocity = connectedRigidbody.velocity;
+                    connectedRigidbody.AddForceAtPosition(Vector3.ClampMagnitude((jointVelocity - connectedVelocity) * damper - anchorToJoint * spring, maxAcceleration), anchorPosition, ForceMode.Acceleration);
+
+                    if (connectedWheelCollider)
+                    {
+                        connectedWheelCollider.steerAngle = Vector3.SignedAngle(connectedRigidbody.transform.forward, transform.forward, Vector3.up);
+                    }
+
+                    var position = transform.position;
+                    var speed = Vector3.Distance(position, prevPosition) / Time.fixedDeltaTime;
+                    prevPosition = position;
+                    var startMoving = Mathf.Approximately(prevSpeed, 0) && speed > 0;
+                    if (startMoving)
+                    {
+                        SetConnectedWheelsMotorTorque(1.0e-36f);
+                    }
+                    else if (prevStartMoving)
+                    {
+                        SetConnectedWheelsMotorTorque(0);
+                    }
+                    prevSpeed = speed;
+                    prevStartMoving = startMoving;
+                }
+
+                var currentJointMass = jointRigidbody.mass;
+                if (!Mathf.Approximately(currentJointMass, ConnectedMass))
+                {
+                    jointRigidbody.mass = Mathf.MoveTowards(currentJointMass, ConnectedMass, Time.fixedDeltaTime);
+                }
             }
-            if (IsVehicleOwner) VehicleOwnerUpdate();
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (ConnectedAnchor != null || Time.time < reconnectableTime) return;
+            if (!other || Connected || Time.time < reconnectableTime) return;
+            var targetRigidbody = other.attachedRigidbody;
+            if (!targetRigidbody) return;
 
-            var anchor = FindAnchor();
-            if (anchor == null || !Networking.IsOwner(anchor.ownerDetector)) return;
+            var targetAnchor = other.GetComponent<USC_TowingAnchor>();
+            if (!targetAnchor || !Networking.IsOwner(targetAnchor.ownerDetector)) return;
 
-            _Connect(anchor);
+            Connect(targetAnchor);
         }
-        #endregion
 
-        #region Udon Events
         public override void Interact()
         {
-            SendCustomNetworkEvent(NetworkEventTarget.All, nameof(Disconnect));
+            SendCustomNetworkEvent(NetworkEventTarget.Owner, nameof(Disconnect));
         }
-        #endregion
 
-        #region Networked Custom Events
+        private void SetConnectedWheelsMotorTorque(float value)
+        {
+            if (!connectedRigidbody) return;
+            foreach (var wheel in connectedRigidbody.GetComponentsInChildren<WheelCollider>()) wheel.motorTorque = value;
+        }
+
+        private void Connect(USC_TowingAnchor targetAncor)
+        {
+            if (!Networking.IsOwner(gameObject))
+            {
+                Networking.SetOwner(Networking.LocalPlayer, gameObject);
+            }
+            ConnectedAnchor = targetAncor;
+            RequestSerialization();
+        }
+
         public void Disconnect()
         {
-            DisableTrigger();
-            force = Vector3.zero;
-
-            if (ConnectedAnchor_AttachedWheelCollider != null)
-            {
-                ConnectedAnchor_AttachedWheelCollider.steerAngle = 0;
-            }
-
-            isConnected = false;
             ConnectedAnchor = null;
-            OnDisconnected();
+            reconnectableTime = Time.time + reconnectionDelay;
+            trigger.enabled = false;
+            SendCustomEventDelayedSeconds(nameof(_ReActivate), reconnectionDelay * 0.5f);
+            RequestSerialization();
         }
 
-        public void OnConnected() => PlayOneShot(onConnected);
-        public void OnDisconnected() => PlayOneShot(onDisconnected);
-
-        #endregion
-
-        #region Local Custom Events
-        public void _Connect(USC_TowingAnchor anchor)
-        {
-            Networking.SetOwner(Networking.LocalPlayer, gameObject);
-
-            force = Vector3.zero;
-            prevRelativePosition = Vector3.zero;
-            prevJointPosition = transform.position;
-
-            ConnectedAnchor = anchor;
-            isConnected = true;
-            WakeUp();
-            SendCustomNetworkEvent(NetworkEventTarget.All, nameof(OnConnected));
-        }
-
-        public void _EnableTrigger()
+        public void _ReActivate()
         {
             trigger.enabled = true;
         }
-        #endregion
 
-        #region Private Logics
-        private bool AnchorOwnerUpdate()
+        private void OnConnected()
         {
-            if (!Networking.IsOwner(ConnectedAnchor_OwnerDetector)) return false;
-            var jointPosition = transform.position;
-            jointVelocity = (jointPosition - prevJointPosition) * Time.fixedDeltaTime;
-            prevJointPosition = jointPosition;
-
-            var connectedAnchorPositon = _connectedAnchor.transform.position;
-            var relativePosition = Vector3.ProjectOnPlane(-transform.InverseTransformPoint(connectedAnchorPositon), Vector3.up);
-
-            var distance = relativePosition.magnitude;
-            if (distance > breakingDistance) return false;
-
-            if (distance > wakeUpDistance) WakeUp();
-
-            force = relativePosition * spring + (relativePosition - prevRelativePosition) * damping;
-            ConnectedAnchor_VehicleRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(transform.TransformVector(force), maxAcceleration) * Time.fixedDeltaTime, connectedAnchorPositon, ForceMode.Acceleration);
-
-            if (ConnectedAnchor_AttachedWheelCollider != null)
-            {
-                ConnectedAnchor_AttachedWheelCollider.steerAngle = GetSteeringAngle();
-            }
-
-            prevRelativePosition = relativePosition;
-
-            return true;
+            PlayOneShot(onConnectedSound);
         }
 
-        private void VehicleOwnerUpdate()
+        private void OnDisconnected()
         {
-            if (force != Vector3.zero) parentRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(-transform.TransformVector(force), maxAcceleration) * Time.fixedDeltaTime * massScale, transform.position, ForceMode.Acceleration);
-        }
-
-        private void DisableTrigger()
-        {
-            reconnectableTime = Time.time + reconnectionDelay;
-            trigger.enabled = false;
-            SendCustomEventDelayedSeconds(nameof(_EnableTrigger), reconnectionDelay * 0.8f);
-        }
-
-        private void WakeUp()
-        {
-            var vehicleRigidbody = ConnectedAnchor.vehicleRigidbody;
-            var forward = vehicleRigidbody.transform.forward;
-            vehicleRigidbody.velocity = forward * Mathf.Sign(Vector3.Dot(forward, transform.position - _connectedAnchor.transform.position)) * .5f;
+            jointRigidbody.mass = initialJointMass;
+            PlayOneShot(onDisconnectedSound);
         }
 
         private void PlayOneShot(AudioClip clip)
         {
-            if (audioSource == null || clip == null) return;
-            audioSource.PlayOneShot(clip);
+            if (clip) audioSource.PlayOneShot(clip);
         }
-
-        private USC_TowingAnchor FindAnchor()
-        {
-            var colliders = Physics.OverlapSphere(transform.TransformPoint(center), radius, anchorLayers, QueryTriggerInteraction.Collide);
-
-            foreach (var collider in colliders)
-            {
-                if (collider == null) continue;
-                var anchor = collider.GetComponent<USC_TowingAnchor>();
-                if (anchor != null) return anchor;
-            }
-
-            return null;
-        }
-
-        private float GetSteeringAngle()
-        {
-            var wheelTransform = ConnectedAnchor_AttachedWheelCollider.transform;
-            var wheelUp = wheelTransform.up;
-            var wheelForward = wheelTransform.forward;
-
-            var projectedDirection = Vector3.ProjectOnPlane((ConnectedAnchor_Transform.position - transform.position).normalized, wheelUp);
-
-            var forwardAngle = Vector3.SignedAngle(wheelForward, projectedDirection, wheelUp);
-            var backwardAngle = Vector3.SignedAngle(-wheelForward, projectedDirection, wheelUp);
-            return Mathf.Abs(forwardAngle) <= Mathf.Abs(backwardAngle) ? forwardAngle : backwardAngle;
-        }
-        #endregion
-
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            this.UpdateProxy();
-            if (!isConnected) return;
-
-            var jointPosition = transform.position;
-            var anchorPosition = ConnectedAnchor.transform.position;
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(jointPosition, 0.1f);
-            Gizmos.DrawWireSphere(anchorPosition, 0.1f);
-
-            Gizmos.color = Color.white;
-            Gizmos.DrawLine(jointPosition, anchorPosition);
-
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(jointPosition, anchorPosition - force);
-            Gizmos.DrawLine(anchorPosition, anchorPosition + force);
-        }
-#endif
     }
 }

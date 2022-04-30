@@ -31,7 +31,7 @@ namespace UdonSimpleCars
             if (!ownerDetector) ownerDetector = FindOwnerDetector();
             if (!vehicleRigidbody) vehicleRigidbody = transform.parent.GetComponentInParent<Rigidbody>();
 
-            Debug.Log($"{this} {ownerDetector}");
+            // Debug.Log($"{this} {ownerDetector}");
 
             attachedWheelCollider = GetComponentInParent<WheelCollider>();
         }
