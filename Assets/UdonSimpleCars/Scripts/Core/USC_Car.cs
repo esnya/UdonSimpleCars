@@ -238,6 +238,9 @@ namespace UdonSimpleCars
             wheelVisualAxiesUp = new Vector3[wheelCount];
             wheelIsSteered = new bool[wheelCount];
 
+            var vehicleRight = transform.right;
+            var vehicleUp = transform.up;
+
             for (var i = 0; i < wheelCount; i++)
             {
                 var wheel = wheels[i];
@@ -248,8 +251,8 @@ namespace UdonSimpleCars
                 {
                     wheelVisualPositionOffsets[i] = wheelTransform.InverseTransformPoint(visual.position) + Vector3.up * wheel.suspensionDistance * wheel.suspensionSpring.targetPosition;
                     wheelVisualLocalRotations[i] = visual.localRotation;
-                    wheelVisualAxiesRight[i] = visual.InverseTransformDirection(wheelTransform.right);
-                    wheelVisualAxiesUp[i] = visual.InverseTransformDirection(wheelTransform.up);
+                    wheelVisualAxiesRight[i] = visual.InverseTransformDirection(Vector3.Project(vehicleRight, wheelTransform.right).normalized);
+                    wheelVisualAxiesUp[i] = visual.InverseTransformDirection(Vector3.Project(vehicleUp, wheelTransform.up).normalized);
                 }
 
                 wheelIsSteered[i] = IsWheelSteered(wheel);
