@@ -150,7 +150,7 @@ ConfigurableJoint:
   m_YMotion: 2
   m_ZMotion: 2
   m_AngularXMotion: 1
-  m_AngularYMotion: 2
+  m_AngularYMotion: 1
   m_AngularZMotion: 1
   m_LinearLimitSpring:
     spring: 0

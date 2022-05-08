@@ -87,6 +87,43 @@ MonoBehaviour:
         objectReference: {fileID: 9140872021914393552, guid: 3abb4122a0be6fb479033738f2932fa2,
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
+  - prefabInstance: {fileID: 4741969065646753558, guid: aa9f37f64eaece645a7b6d3929c05a07,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Towing/TowBar.prefab
+    udonVariables:
+    - udonInstance: {fileID: 5613752756649099790, guid: aa9f37f64eaece645a7b6d3929c05a07,
+        type: 3}
+      gameObjectName: TowingJoint
+      variables:
+      - symbolName: breakingDistance
+        objectReference: {fileID: 0}
+        value: 10
+      - symbolName: damper
+        objectReference: {fileID: 0}
+        value: 10
+      - symbolName: maxAcceleration
+        objectReference: {fileID: 0}
+        value: 20
+      - symbolName: minSteeringSpeed
+        objectReference: {fileID: 0}
+        value: 1
+      - symbolName: onConnectedSound
+        objectReference: {fileID: 8300000, guid: 64ca17c1188412347901cf9e24b1ed13,
+          type: 3}
+        value: CatapultLock (UnityEngine.AudioClip)
+      - symbolName: onDisconnectedSound
+        objectReference: {fileID: 8300000, guid: 16f6f99eac353cd488cd2e3fbd945510,
+          type: 3}
+        value: Reloading (UnityEngine.AudioClip)
+      - symbolName: reconnectionDelay
+        objectReference: {fileID: 0}
+        value: 10
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 10
+      - symbolName: wakeUpDistance
+        objectReference: {fileID: 0}
+        value: 0.5
   - prefabInstance: {fileID: 1306309843375642412, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Towing/TowingJoint.prefab
