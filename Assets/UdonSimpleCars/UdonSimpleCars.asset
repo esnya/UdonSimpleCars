@@ -24,19 +24,24 @@ MonoBehaviour:
       - symbolName: AdjustSeat
         objectReference: {fileID: 0}
         value: True
+        arrayItems: []
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
+        arrayItems: []
       - symbolName: getOutKey
         objectReference: {fileID: 0}
         value: Return
+        arrayItems: []
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: True
+        arrayItems: []
       - symbolName: TargetEyePosition
         objectReference: {fileID: 5589825168805251761, guid: 06526237862500e42bc60720a296c08c,
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
+        arrayItems: []
   - prefabInstance: {fileID: 867768652620275319, guid: b83f5e71b839ccb42854100226e29fe4,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Core/PassengerSeat
@@ -49,19 +54,24 @@ MonoBehaviour:
       - symbolName: AdjustSeat
         objectReference: {fileID: 0}
         value: True
+        arrayItems: []
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
+        arrayItems: []
       - symbolName: getOutKey
         objectReference: {fileID: 0}
         value: Return
+        arrayItems: []
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+        arrayItems: []
       - symbolName: TargetEyePosition
         objectReference: {fileID: 4319119116696257167, guid: b83f5e71b839ccb42854100226e29fe4,
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
+        arrayItems: []
   - prefabInstance: {fileID: 5269387084042503976, guid: 3abb4122a0be6fb479033738f2932fa2,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Core/PassengerSeat
@@ -74,19 +84,24 @@ MonoBehaviour:
       - symbolName: AdjustSeat
         objectReference: {fileID: 0}
         value: True
+        arrayItems: []
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
+        arrayItems: []
       - symbolName: getOutKey
         objectReference: {fileID: 0}
         value: Return
+        arrayItems: []
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+        arrayItems: []
       - symbolName: TargetEyePosition
         objectReference: {fileID: 9140872021914393552, guid: 3abb4122a0be6fb479033738f2932fa2,
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
+        arrayItems: []
   - prefabInstance: {fileID: 4741969065646753558, guid: aa9f37f64eaece645a7b6d3929c05a07,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Towing/TowBar.prefab
@@ -98,32 +113,41 @@ MonoBehaviour:
       - symbolName: breakingDistance
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
       - symbolName: damper
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
       - symbolName: maxAcceleration
         objectReference: {fileID: 0}
         value: 20
+        arrayItems: []
       - symbolName: minSteeringSpeed
         objectReference: {fileID: 0}
         value: 1
+        arrayItems: []
       - symbolName: onConnectedSound
         objectReference: {fileID: 8300000, guid: 64ca17c1188412347901cf9e24b1ed13,
           type: 3}
         value: CatapultLock (UnityEngine.AudioClip)
+        arrayItems: []
       - symbolName: onDisconnectedSound
         objectReference: {fileID: 8300000, guid: 16f6f99eac353cd488cd2e3fbd945510,
           type: 3}
         value: Reloading (UnityEngine.AudioClip)
+        arrayItems: []
       - symbolName: reconnectionDelay
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
       - symbolName: spring
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
       - symbolName: wakeUpDistance
         objectReference: {fileID: 0}
         value: 0.5
+        arrayItems: []
   - prefabInstance: {fileID: 1306309843375642412, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/Prefabs/Towing/TowingJoint.prefab
@@ -135,32 +159,41 @@ MonoBehaviour:
       - symbolName: breakingDistance
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
       - symbolName: damper
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
       - symbolName: maxAcceleration
         objectReference: {fileID: 0}
         value: 20
+        arrayItems: []
       - symbolName: minSteeringSpeed
         objectReference: {fileID: 0}
         value: 1
+        arrayItems: []
       - symbolName: onConnectedSound
         objectReference: {fileID: 8300000, guid: 64ca17c1188412347901cf9e24b1ed13,
           type: 3}
         value: CatapultLock (UnityEngine.AudioClip)
+        arrayItems: []
       - symbolName: onDisconnectedSound
         objectReference: {fileID: 8300000, guid: 16f6f99eac353cd488cd2e3fbd945510,
           type: 3}
         value: Reloading (UnityEngine.AudioClip)
+        arrayItems: []
       - symbolName: reconnectionDelay
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
       - symbolName: spring
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
       - symbolName: wakeUpDistance
         objectReference: {fileID: 0}
         value: 0.5
+        arrayItems: []
   - prefabInstance: {fileID: 8311205895600088585, guid: fdec5079b5262f6419ce6e58b22b3cd2,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Assets/UdonSimpleCars/SampleAssets/UdonSimpleCar.prefab
@@ -172,19 +205,24 @@ MonoBehaviour:
       - symbolName: AdjustSeat
         objectReference: {fileID: 0}
         value: True
+        arrayItems: []
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
+        arrayItems: []
       - symbolName: getOutKey
         objectReference: {fileID: 0}
         value: Return
+        arrayItems: []
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: True
+        arrayItems: []
       - symbolName: TargetEyePosition
         objectReference: {fileID: 195723459607330267, guid: fdec5079b5262f6419ce6e58b22b3cd2,
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
+        arrayItems: []
     - udonInstance: {fileID: 3445209583190772268, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: PassengerSeat (L)
@@ -192,19 +230,24 @@ MonoBehaviour:
       - symbolName: AdjustSeat
         objectReference: {fileID: 0}
         value: True
+        arrayItems: []
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
+        arrayItems: []
       - symbolName: getOutKey
         objectReference: {fileID: 0}
         value: Return
+        arrayItems: []
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+        arrayItems: []
       - symbolName: TargetEyePosition
         objectReference: {fileID: 866014325584259492, guid: fdec5079b5262f6419ce6e58b22b3cd2,
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
+        arrayItems: []
     - udonInstance: {fileID: 8148746232920065977, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: PassengerSeat (R) (1)
@@ -212,19 +255,24 @@ MonoBehaviour:
       - symbolName: AdjustSeat
         objectReference: {fileID: 0}
         value: True
+        arrayItems: []
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
+        arrayItems: []
       - symbolName: getOutKey
         objectReference: {fileID: 0}
         value: Return
+        arrayItems: []
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+        arrayItems: []
       - symbolName: TargetEyePosition
         objectReference: {fileID: 5971013525659853873, guid: fdec5079b5262f6419ce6e58b22b3cd2,
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
+        arrayItems: []
     - udonInstance: {fileID: 2986034748062668817, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: PassengerSeat (R) (2)
@@ -232,19 +280,24 @@ MonoBehaviour:
       - symbolName: AdjustSeat
         objectReference: {fileID: 0}
         value: True
+        arrayItems: []
       - symbolName: getOutButton
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
+        arrayItems: []
       - symbolName: getOutKey
         objectReference: {fileID: 0}
         value: Return
+        arrayItems: []
       - symbolName: isDriver
         objectReference: {fileID: 0}
         value: False
+        arrayItems: []
       - symbolName: TargetEyePosition
         objectReference: {fileID: 773460681444653977, guid: fdec5079b5262f6419ce6e58b22b3cd2,
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
+        arrayItems: []
     - udonInstance: {fileID: 3247081696457951111, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: Respawner
@@ -253,6 +306,7 @@ MonoBehaviour:
         objectReference: {fileID: 8311205895600088590, guid: fdec5079b5262f6419ce6e58b22b3cd2,
           type: 3}
         value: UdonSimpleCar (VRC.Udon.UdonBehaviour)
+        arrayItems: []
     - udonInstance: {fileID: 8311205895600088590, guid: fdec5079b5262f6419ce6e58b22b3cd2,
         type: 3}
       gameObjectName: UdonSimpleCar
@@ -260,124 +314,186 @@ MonoBehaviour:
       - symbolName: accelerationAxis
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_SecondaryIndexTrigger
+        arrayItems: []
       - symbolName: accelerationKey
         objectReference: {fileID: 0}
         value: LeftShift
+        arrayItems: []
       - symbolName: accelerationParameter
         objectReference: {fileID: 0}
         value: Acceleration
+        arrayItems: []
       - symbolName: accelerationResponse
         objectReference: {fileID: 0}
         value: 1
+        arrayItems: []
       - symbolName: accelerationTorque
         objectReference: {fileID: 0}
         value: 300
+        arrayItems: []
       - symbolName: backAccelerationKey
         objectReference: {fileID: 0}
         value: LeftControl
+        arrayItems: []
       - symbolName: backGearAxis
         objectReference: {fileID: 0}
         value: Vertical
+        arrayItems: []
       - symbolName: backGearParameter
         objectReference: {fileID: 0}
         value: BackGear
+        arrayItems: []
       - symbolName: brakeAxis
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_PrimaryIndexTrigger
+        arrayItems: []
       - symbolName: brakeKey
         objectReference: {fileID: 0}
         value: B
+        arrayItems: []
       - symbolName: brakeParameter
         objectReference: {fileID: 0}
         value: Brake
+        arrayItems: []
       - symbolName: brakeResponse
         objectReference: {fileID: 0}
         value: 1
+        arrayItems: []
       - symbolName: brakeTorque
         objectReference: {fileID: 0}
         value: 1000
+        arrayItems: []
       - symbolName: brakeWheels
         objectReference: {fileID: 0}
         value: UnityEngine.WheelCollider[]
+        arrayItems:
+        - Wheel.FR (UnityEngine.WheelCollider)
+        - Wheel.FL (UnityEngine.WheelCollider)
       - symbolName: drivingWheels
         objectReference: {fileID: 0}
         value: UnityEngine.WheelCollider[]
+        arrayItems:
+        - Wheel.FR (UnityEngine.WheelCollider)
+        - Wheel.FL (UnityEngine.WheelCollider)
       - symbolName: engineSound
         objectReference: {fileID: 8311205894919746665, guid: fdec5079b5262f6419ce6e58b22b3cd2,
           type: 3}
         value: EngineSound (UnityEngine.AudioSource)
+        arrayItems: []
       - symbolName: engineSoundPitch
         objectReference: {fileID: 0}
         value: UnityEngine.AnimationCurve
+        arrayItems: []
       - symbolName: engineSoundVolume
         objectReference: {fileID: 0}
         value: UnityEngine.AnimationCurve
+        arrayItems: []
       - symbolName: gearParameter
         objectReference: {fileID: 0}
         value: Gear
+        arrayItems: []
       - symbolName: inVehicleOnly
         objectReference: {fileID: 2901332477106702893, guid: fdec5079b5262f6419ce6e58b22b3cd2,
           type: 3}
         value: InVehicleOnly (UnityEngine.GameObject)
+        arrayItems: []
       - symbolName: isDrivedParameter
         objectReference: {fileID: 0}
         value: IsDrived
+        arrayItems: []
       - symbolName: isOperatingParameter
         objectReference: {fileID: 0}
         value: IsOperating
+        arrayItems: []
       - symbolName: localInVehicleParameter
         objectReference: {fileID: 0}
         value: LocalInVehicle
+        arrayItems: []
       - symbolName: localIsDriverParameter
         objectReference: {fileID: 0}
         value: LocalIsDriver
+        arrayItems: []
       - symbolName: maxSteeringAngle
         objectReference: {fileID: 0}
         value: 20
+        arrayItems: []
       - symbolName: respawnerPrefab
         objectReference: {fileID: 6935105098761842275, guid: 341d055a74aedb045bd1136b6eb87bd5,
           type: 3}
         value: Respawner (UnityEngine.GameObject)
+        arrayItems: []
       - symbolName: steeredWheels
         objectReference: {fileID: 0}
         value: UnityEngine.WheelCollider[]
+        arrayItems:
+        - Wheel.FR (UnityEngine.WheelCollider)
+        - Wheel.FL (UnityEngine.WheelCollider)
       - symbolName: steeringAxis
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_SecondaryThumbstickHorizontal
+        arrayItems: []
       - symbolName: steeringKeyLeft
         objectReference: {fileID: 0}
         value: A
+        arrayItems: []
       - symbolName: steeringKeyRight
         objectReference: {fileID: 0}
         value: D
+        arrayItems: []
       - symbolName: steeringParameter
         objectReference: {fileID: 0}
         value: Steering
+        arrayItems: []
       - symbolName: steeringResponse
         objectReference: {fileID: 0}
         value: 1
+        arrayItems: []
       - symbolName: steeringWheel
         objectReference: {fileID: 5326935212896379205, guid: fdec5079b5262f6419ce6e58b22b3cd2,
           type: 3}
         value: SteeringWheel (UnityEngine.Transform)
+        arrayItems: []
       - symbolName: steeringWheelAxis
         objectReference: {fileID: 0}
         value: (0.0, 0.0, 1.0)
+        arrayItems: []
       - symbolName: steeringWheelMaxAngle
         objectReference: {fileID: 0}
         value: 640
+        arrayItems: []
       - symbolName: steeringWheels
         objectReference: {fileID: 0}
         value: UnityEngine.WheelCollider[]
+        arrayItems:
+        - Wheel.FR (UnityEngine.WheelCollider)
+        - Wheel.FL (UnityEngine.WheelCollider)
       - symbolName: steeringWheelTransforms
         objectReference: {fileID: 0}
         value: UnityEngine.Transform[]
+        arrayItems:
+        - Cylinder (UnityEngine.Transform)
+        - Cylinder (UnityEngine.Transform)
       - symbolName: wheels
         objectReference: {fileID: 0}
         value: UnityEngine.WheelCollider[]
+        arrayItems:
+        - Wheel.FL (UnityEngine.WheelCollider)
+        - Wheel.FR (UnityEngine.WheelCollider)
+        - Wheel.RL (UnityEngine.WheelCollider)
+        - Wheel.RR (UnityEngine.WheelCollider)
       - symbolName: wheelTransforms
         objectReference: {fileID: 0}
         value: UnityEngine.Transform[]
+        arrayItems:
+        - Cylinder (UnityEngine.Transform)
+        - Cylinder (UnityEngine.Transform)
+        - Cylinder (UnityEngine.Transform)
+        - Cylinder (UnityEngine.Transform)
       - symbolName: wheelVisuals
         objectReference: {fileID: 0}
         value: UnityEngine.Transform[]
+        arrayItems:
+        - Wheel.FL (UnityEngine.Transform)
+        - Wheel.FR (UnityEngine.Transform)
+        - Wheel.RL (UnityEngine.Transform)
+        - Wheel.RR (UnityEngine.Transform)
