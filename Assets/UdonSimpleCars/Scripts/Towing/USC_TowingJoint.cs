@@ -22,7 +22,7 @@ namespace UdonSimpleCars
         public float minSteeringSpeed = 1.0f;
         public float breakingDistance = 10.0f;
         public float reconnectionDelay = 10;
-        public float wakeUpDistance = 0.5f;
+        public float wakeUpDistance = 0.2f;
 
         [Space]
         public AudioClip onConnectedSound;
@@ -81,6 +81,7 @@ namespace UdonSimpleCars
         private Vector3 prevPosition;
         private float prevSpeed;
         private bool prevStartMoving;
+        private bool prevWakeUp;
 
         private float ConnectedMass
         {
@@ -119,27 +120,24 @@ namespace UdonSimpleCars
                 {
                     var jointVelocity = jointRigidbody.velocity;
                     var connectedVelocity = connectedRigidbody.velocity;
-                    connectedRigidbody.AddForceAtPosition(Vector3.ClampMagnitude((jointVelocity - connectedVelocity) * damper - anchorToJoint * spring, maxAcceleration), anchorPosition, ForceMode.Acceleration);
+                    var connectedToJoint = jointVelocity - connectedVelocity;
+                    connectedRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(connectedToJoint * damper - anchorToJoint * spring, maxAcceleration), anchorPosition, ForceMode.Acceleration);
+
+                    var wakeUp = !prevWakeUp && connectedToJoint.magnitude > wakeUpDistance;
+                    if (wakeUp)
+                    {
+                        SetConnectedWheelsMotorTorque(1.0e-36f);
+                    }
+                    if (prevWakeUp)
+                    {
+                        SetConnectedWheelsMotorTorque(0.0f);
+                    }
+                    prevWakeUp = wakeUp;
 
                     if (connectedWheelCollider)
                     {
                         connectedWheelCollider.steerAngle = Vector3.SignedAngle(connectedRigidbody.transform.forward, transform.forward, Vector3.up);
                     }
-
-                    var position = transform.position;
-                    var speed = Vector3.Distance(position, prevPosition) / Time.fixedDeltaTime;
-                    prevPosition = position;
-                    var startMoving = Mathf.Approximately(prevSpeed, 0) && speed > 0;
-                    if (startMoving)
-                    {
-                        SetConnectedWheelsMotorTorque(1.0e-36f);
-                    }
-                    else if (prevStartMoving)
-                    {
-                        SetConnectedWheelsMotorTorque(0);
-                    }
-                    prevSpeed = speed;
-                    prevStartMoving = startMoving;
                 }
 
                 var currentJointMass = jointRigidbody.mass;
