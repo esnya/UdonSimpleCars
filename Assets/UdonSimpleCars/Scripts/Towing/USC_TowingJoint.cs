@@ -23,6 +23,7 @@ namespace UdonSimpleCars
         public float breakingDistance = 10.0f;
         public float reconnectionDelay = 10;
         public float wakeUpDistance = 0.2f;
+        public float fakeMassResponse = 1;
 
         [Space]
         public AudioClip onConnectedSound;
@@ -143,7 +144,7 @@ namespace UdonSimpleCars
                 var currentJointMass = jointRigidbody.mass;
                 if (!Mathf.Approximately(currentJointMass, ConnectedMass))
                 {
-                    jointRigidbody.mass = Mathf.MoveTowards(currentJointMass, ConnectedMass, Time.fixedDeltaTime);
+                    jointRigidbody.mass = Mathf.Lerp(currentJointMass, ConnectedMass, fakeMassResponse * Time.fixedDeltaTime);
                 }
             }
         }

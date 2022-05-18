@@ -118,6 +118,10 @@ MonoBehaviour:
         objectReference: {fileID: 0}
         value: 10
         arrayItems: []
+      - symbolName: fakeMassResponse
+        objectReference: {fileID: 0}
+        value: 1
+        arrayItems: []
       - symbolName: maxAcceleration
         objectReference: {fileID: 0}
         value: 20
@@ -163,6 +167,10 @@ MonoBehaviour:
       - symbolName: damper
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
+      - symbolName: fakeMassResponse
+        objectReference: {fileID: 0}
+        value: 1
         arrayItems: []
       - symbolName: maxAcceleration
         objectReference: {fileID: 0}
