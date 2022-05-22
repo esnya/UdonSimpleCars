@@ -1,0 +1,30 @@
+{
+  "name": "com.nekometer.esnya.udon-simple-cars",
+  "displayName": "Udon Simple Cars",
+  "version": "2.0.0-beta.10",
+  "private": true,
+  "description": " Just a simple driver of WheelCollider(s) for VRChat Udon worlds. But synced and configurable without codes. ",
+  "homepage": "https://github.com/esnya/UdonSimpleCars#readme",
+  "bugs": {
+    "url": "https://github.com/esnya/UdonSimpleCars/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esnya/UdonSimpleCars.git"
+  },
+  "legacyFolders": {
+    "Assets\\UdonSimpleCars": ""
+  },
+  "gitDependencies": {
+    "com.vrchat.udonsharp": "https://github.com/vrchat-community/UdonSharp.git?path=/Packages/com.vrchat.UdonSharp#1.0.1",
+    "com.vrchat.worlds": "https://github.com/vrchat/packages.git?path=/packages/com.vrchat.worlds#3.0.4",
+    "sh.orels.udontoolkit": "https://github.com/orels1/UdonToolkit#develop"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "esnya",
+    "url": "https://github.com/esnya"
+  },
+  "unity": "2019.4",
+  "url": "ttps://github.com/esnya/UdonSimpleCars.git?path=/Packages/com.nekometer.esnya.udon-simple-cars"
+}
