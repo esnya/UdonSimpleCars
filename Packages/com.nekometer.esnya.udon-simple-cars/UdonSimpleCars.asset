@@ -377,6 +377,11 @@ MonoBehaviour:
         arrayItems:
         - Wheel.FR (UnityEngine.WheelCollider)
         - Wheel.FL (UnityEngine.WheelCollider)
+      - symbolName: detachedObjects
+        objectReference: {fileID: 5922224045240569780, guid: fdec5079b5262f6419ce6e58b22b3cd2,
+          type: 3}
+        value: Detached (UnityEngine.Transform)
+        arrayItems: []
       - symbolName: drivingWheels
         objectReference: {fileID: 0}
         value: UnityEngine.WheelCollider[]
