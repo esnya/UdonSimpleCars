@@ -250,7 +250,11 @@ namespace UdonSimpleCars
                 var visual = (wheelVisuals != null && i < wheelVisuals.Length) ? wheelVisuals[i] : null;
                 if (visual != null)
                 {
-                    wheelVisualPositionOffsets[i] = wheelTransform.InverseTransformPoint(visual.position) + Vector3.up * wheel.suspensionDistance * wheel.suspensionSpring.targetPosition;
+                    var wheelVisual = wheelVisuals[i];
+                    Vector3 wheelPosition;
+                    Quaternion wheelRotation;
+                    wheel.GetWorldPose(out wheelPosition, out wheelRotation);
+                    wheelVisualPositionOffsets[i] = transform.InverseTransformVector(wheelVisual.position - wheelPosition);
                     wheelVisualLocalRotations[i] = visual.localRotation;
                     wheelVisualAxiesRight[i] = visual.InverseTransformDirection(Vector3.Project(vehicleRight, wheelTransform.right).normalized);
                     wheelVisualAxiesUp[i] = visual.InverseTransformDirection(Vector3.Project(vehicleUp, wheelTransform.up).normalized);
