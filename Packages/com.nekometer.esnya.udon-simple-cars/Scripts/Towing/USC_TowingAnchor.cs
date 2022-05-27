@@ -13,6 +13,7 @@ namespace UdonSimpleCars
         #region Public Variables
         [Tooltip("Default: VRCObjectSync in parent or find from SaccFlightAndVehicles")]
         public GameObject ownerDetector;
+        public string[] keywords = { "DEFAULT" };
         #endregion
 
         #region NonSerialized Variables

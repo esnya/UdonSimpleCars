@@ -102,17 +102,89 @@ MonoBehaviour:
           type: 3}
         value: TargetEyePosition (UnityEngine.Transform)
         arrayItems: []
+  - prefabInstance: {fileID: 57717703550825221, guid: bdf959e9fd226444bb29c3795cce4f71,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Packages/com.nekometer.esnya.udon-simple-cars/Prefabs/Towing/HandPusher.prefab
+    udonVariables:
+    - udonInstance: {fileID: 8554489280166959196, guid: bdf959e9fd226444bb29c3795cce4f71,
+        type: 3}
+      gameObjectName: HandPusher
+      variables:
+      - symbolName: maxForce
+        objectReference: {fileID: 0}
+        value: 80
+        arrayItems: []
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 10000
+        arrayItems: []
+      - symbolName: sync
+        objectReference: {fileID: 0}
+        value: True
+        arrayItems: []
+      - symbolName: wakeUpDistance
+        objectReference: {fileID: 0}
+        value: 0.1
+        arrayItems: []
   - prefabInstance: {fileID: 4741969065646753558, guid: aa9f37f64eaece645a7b6d3929c05a07,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Packages/com.nekometer.esnya.udon-simple-cars/Prefabs/Towing/TowBar.prefab
     udonVariables:
+    - udonInstance: {fileID: 9085658124089495754, guid: aa9f37f64eaece645a7b6d3929c05a07,
+        type: 3}
+      gameObjectName: HandPusher
+      variables:
+      - symbolName: maxForce
+        objectReference: {fileID: 0}
+        value: 80
+        arrayItems: []
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 10000
+        arrayItems: []
+      - symbolName: sync
+        objectReference: {fileID: 0}
+        value: True
+        arrayItems: []
+      - symbolName: wakeUpDistance
+        objectReference: {fileID: 0}
+        value: 0.1
+        arrayItems: []
+    - udonInstance: {fileID: 965732938039069675, guid: aa9f37f64eaece645a7b6d3929c05a07,
+        type: 3}
+      gameObjectName: HandPusher
+      variables:
+      - symbolName: maxForce
+        objectReference: {fileID: 0}
+        value: 80
+        arrayItems: []
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 10000
+        arrayItems: []
+      - symbolName: sync
+        objectReference: {fileID: 0}
+        value: True
+        arrayItems: []
+      - symbolName: wakeUpDistance
+        objectReference: {fileID: 0}
+        value: 0.1
+        arrayItems: []
     - udonInstance: {fileID: 5613752756649099790, guid: aa9f37f64eaece645a7b6d3929c05a07,
         type: 3}
       gameObjectName: TowingJoint
       variables:
+      - symbolName: anchorLayers
+        objectReference: {fileID: 0}
+        value: UnityEngine.LayerMask
+        arrayItems: []
       - symbolName: breakingDistance
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
+      - symbolName: connectingMaxDistance
+        objectReference: {fileID: 0}
+        value: 0.5
         arrayItems: []
       - symbolName: damper
         objectReference: {fileID: 0}
@@ -147,6 +219,10 @@ MonoBehaviour:
       - symbolName: spring
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
+      - symbolName: syncOwnership
+        objectReference: {fileID: 0}
+        value: False
         arrayItems: []
       - symbolName: wakeUpDistance
         objectReference: {fileID: 0}
@@ -160,9 +236,17 @@ MonoBehaviour:
         type: 3}
       gameObjectName: TowingJoint
       variables:
+      - symbolName: anchorLayers
+        objectReference: {fileID: 0}
+        value: UnityEngine.LayerMask
+        arrayItems: []
       - symbolName: breakingDistance
         objectReference: {fileID: 0}
         value: 10
+        arrayItems: []
+      - symbolName: connectingMaxDistance
+        objectReference: {fileID: 0}
+        value: 0.5
         arrayItems: []
       - symbolName: damper
         objectReference: {fileID: 0}
@@ -198,9 +282,13 @@ MonoBehaviour:
         objectReference: {fileID: 0}
         value: 10
         arrayItems: []
+      - symbolName: syncOwnership
+        objectReference: {fileID: 0}
+        value: True
+        arrayItems: []
       - symbolName: wakeUpDistance
         objectReference: {fileID: 0}
-        value: 0.5
+        value: 0.1
         arrayItems: []
   - prefabInstance: {fileID: 8311205895600088585, guid: fdec5079b5262f6419ce6e58b22b3cd2,
       type: 3}

@@ -7,8 +7,8 @@ PhysicMaterial:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Skid
-  dynamicFriction: 0.99
-  staticFriction: 0.99
+  dynamicFriction: 0.1
+  staticFriction: 0.1
   bounciness: 0
-  frictionCombine: 3
-  bounceCombine: 3
+  frictionCombine: 0
+  bounceCombine: 0
