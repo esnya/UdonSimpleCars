@@ -110,9 +110,10 @@ namespace UdonSimpleCars
                 Vector3 anchorToJoint = anchorPosition - transform.position;
 
                 float anchorDistance = anchorToJoint.magnitude;
-                if (!Networking.IsOwner(ownerDetector) || anchorDistance > breakingDistance)
+                if (!Networking.IsOwner(ownerDetector) || anchorDistance > breakingDistance || syncOwnership && !Networking.IsOwner(attachedRigidbody.gameObject))
                 {
-                    Disconnect();
+                    InstantDesconnect();
+                    SendCustomNetworkEvent(NetworkEventTarget.All, nameof(TryConnect));
                 }
                 else
                 {
@@ -153,7 +154,7 @@ namespace UdonSimpleCars
 
         private bool Connectable => !Connected && Time.time >= reconnectableTime;
 
-        public void _TryConnect()
+        public void TryConnect()
         {
             if (!Connectable)
             {
@@ -248,11 +249,16 @@ namespace UdonSimpleCars
 
         public void Disconnect()
         {
-            ConnectedAnchor = null;
+            InstantDesconnect();
             reconnectableTime = Time.time + reconnectionDelay;
             trigger.enabled = false;
             SendCustomEventDelayedSeconds(nameof(_ReActivate), reconnectionDelay * 0.5f);
             RequestSerialization();
+        }
+
+        public void InstantDesconnect()
+        {
+            ConnectedAnchor = null;
         }
 
         public void _ReActivate()
