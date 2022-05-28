@@ -232,7 +232,8 @@ namespace UdonSimpleCars
 
             if (syncOwnership)
             {
-                if (!Networking.IsOwner(gameObject)) return;
+                if (!Networking.IsOwner(attachedRigidbody.gameObject)) return;
+                Networking.SetOwner(Networking.LocalPlayer, gameObject);
                 Networking.SetOwner(Networking.LocalPlayer, targetAnchor.vehicleRigidbody.gameObject);
             }
             else
