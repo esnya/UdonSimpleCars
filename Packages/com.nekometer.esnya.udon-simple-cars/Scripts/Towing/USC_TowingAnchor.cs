@@ -13,51 +13,24 @@ namespace UdonSimpleCars
         #region Public Variables
         [Tooltip("Default: VRCObjectSync in parent or find from SaccFlightAndVehicles")]
         public GameObject ownerDetector;
-        public string[] keywords = { "DEFAULT" };
+        public string keyword = "DEFAULT";
         #endregion
 
         #region NonSerialized Variables
-        [NonSerialized] public Rigidbody vehicleRigidbody;
+        [NonSerialized] public Rigidbody attachedRigidbody;
         [NonSerialized] public WheelCollider attachedWheelCollider;
+        [NonSerialized] public string[] keywords;
         #endregion
 
         #region Unity Events
         private void Start()
         {
-            var objectSync = (VRCObjectSync)GetComponentInParent(typeof(VRCObjectSync));
-            if (objectSync)
-            {
-                vehicleRigidbody = objectSync.GetComponent<Rigidbody>();
-            }
-            if (!ownerDetector) ownerDetector = FindOwnerDetector();
-            if (!vehicleRigidbody) vehicleRigidbody = transform.parent.GetComponentInParent<Rigidbody>();
-
-            // Debug.Log($"{this} {ownerDetector}");
+            attachedRigidbody = transform.parent.GetComponentInParent<Rigidbody>();
+            if (!ownerDetector) ownerDetector = attachedRigidbody.gameObject;
 
             attachedWheelCollider = GetComponentInParent<WheelCollider>();
-        }
-        #endregion
 
-        #region Internal Logics
-        private GameObject FindOwnerDetector()
-        {
-            var objectSync = (VRCObjectSync)GetComponentInParent(typeof(VRCObjectSync));
-            if (objectSync) return objectSync.gameObject;
-
-            var rigidbody = transform.parent.GetComponentInParent<Rigidbody>();
-            if (rigidbody)
-            {
-                foreach (var udon in rigidbody.GetComponentsInChildren(typeof(UdonBehaviour)))
-                {
-                    var usharp = (UdonSharpBehaviour)udon;
-                    if (!usharp) continue;
-                    var name = usharp.GetUdonTypeName();
-                    if (name == "SaccAirVehicle" || name == "SaccSeaVehicle" || name == "EngineController" || name == "SyncScript") return udon.gameObject;
-                }
-                return rigidbody.gameObject;
-            }
-
-            return gameObject;
+            keywords = keyword.Split(',');
         }
         #endregion
     }

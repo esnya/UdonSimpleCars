@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9134093938860267655}
-  - component: {fileID: 3660450628990376930}
+  - component: {fileID: 3346540325648328169}
   - component: {fileID: 3318770050843764781}
   m_Layer: 17
   m_Name: TowingAnchor
@@ -32,8 +32,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &3660450628990376930
-SphereCollider:
+--- !u!136 &3346540325648328169
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -42,8 +42,9 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 2
   m_Radius: 0.2
+  m_Height: 0.8
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3318770050843764781
 MonoBehaviour:

@@ -19,6 +19,7 @@ namespace UdonSimpleCars
         private GameObject attachedGameObject;
         private Vector3 localPosition;
         private Quaternion localRotation;
+        private bool isHeld;
         [UdonSynced] private Vector3 force;
         private WheelCollider[] wheelColliders;
 
@@ -36,27 +37,25 @@ namespace UdonSimpleCars
             wheelColliders = attachedRigidbody.GetComponentsInChildren<WheelCollider>(true);
             localPosition = transform.localPosition;
             localRotation = transform.localRotation;
-
-            gameObject.SetActive(false);
         }
 
         public override void OnPickup() => SendCustomNetworkEvent(NetworkEventTarget.All, nameof(RemotePickup));
-        public void RemotePickup() => gameObject.SetActive(true);
+        public void RemotePickup() => isHeld = true;
 
         public override void OnDrop() => SendCustomNetworkEvent(NetworkEventTarget.All, nameof(RemoteDrop));
         public void RemoteDrop()
         {
+            isHeld = false;
+
             force = Vector3.zero;
             transform.localPosition = localPosition;
             transform.localRotation = localRotation;
             foreach (var wheel in wheelColliders) wheel.motorTorque = 0;
-
-            gameObject.SetActive(false);
         }
 
         public void FixedUpdate()
         {
-            if (Networking.IsOwner(attachedGameObject))
+            if (isHeld && Networking.IsOwner(attachedGameObject))
             {
                 attachedRigidbody.AddForceAtPosition(force, AnchorPosition);
 
@@ -69,7 +68,7 @@ namespace UdonSimpleCars
 
         public void Update()
         {
-            if (Networking.IsOwner(gameObject))
+            if (isHeld && Networking.IsOwner(gameObject))
             {
                 var relative = transform.position - AnchorPosition;
                 force = Vector3.ClampMagnitude(relative * spring, maxForce);

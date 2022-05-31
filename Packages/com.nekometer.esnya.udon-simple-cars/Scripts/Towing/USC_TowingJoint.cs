@@ -1,3 +1,4 @@
+using System;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -12,7 +13,7 @@ namespace UdonSimpleCars
     [RequireComponent(typeof(AudioSource))]
     public class USC_TowingJoint : UdonSharpBehaviour
     {
-        public LayerMask anchorLayers = 1 | 1 << 17;
+        public LayerMask anchorLayers = 1 | 1 << 17 | (int)(1 << 32);
         public float connectingMaxDistance = 0.5f;
 
         public float maxAcceleration = 20.0f;
@@ -21,17 +22,18 @@ namespace UdonSimpleCars
         public float minSteeringSpeed = 1.0f;
         public float breakingDistance = 10.0f;
         public float reconnectionDelay = 10;
-        public float wakeUpDistance = 0.2f;
-        public string[] keywords = { "DEFAULT" };
+        public float wakeUpDistance = 0.02f;
+        public string keyword = "DEFAULT";
         public bool syncOwnership = false;
 
         [Space]
         public AudioClip onConnectedSound;
         public AudioClip onDisconnectedSound;
 
+        [NonSerialized] public string[] keywords;
         private AudioSource audioSource;
         private Rigidbody attachedRigidbody;
-
+        private GameObject attachedGameObject;
         private GameObject ownerDetector;
         private Rigidbody connectedRigidbody;
         private Transform connectedTransform;
@@ -51,7 +53,7 @@ namespace UdonSimpleCars
                 connectedTransform = value ? value.transform : null;
 
                 ownerDetector = value ? value.ownerDetector : null;
-                connectedRigidbody = value ? value.vehicleRigidbody : null;
+                connectedRigidbody = value ? value.attachedRigidbody : null;
                 connectedWheelCollider = value ? value.attachedWheelCollider : null;
             }
             get => _connectedAnchor;
@@ -97,7 +99,9 @@ namespace UdonSimpleCars
         {
             audioSource = GetComponent<AudioSource>();
             attachedRigidbody = GetComponentInParent<Rigidbody>();
+            attachedGameObject = attachedRigidbody.gameObject;
             trigger = GetComponent<SphereCollider>();
+            keywords = keyword.Split(',');
 
             ConnectedAnchor = null;
         }
@@ -110,7 +114,11 @@ namespace UdonSimpleCars
                 Vector3 anchorToJoint = anchorPosition - transform.position;
 
                 float anchorDistance = anchorToJoint.magnitude;
-                if (!Networking.IsOwner(ownerDetector) || anchorDistance > breakingDistance || syncOwnership && !Networking.IsOwner(attachedRigidbody.gameObject))
+                if (anchorDistance > breakingDistance)
+                {
+                    Disconnect();
+                }
+                else if (!Networking.IsOwner(ownerDetector) || syncOwnership && !Networking.IsOwner(attachedGameObject))
                 {
                     InstantDesconnect();
                     SendCustomNetworkEvent(NetworkEventTarget.All, nameof(TryConnect));
@@ -156,17 +164,11 @@ namespace UdonSimpleCars
 
         public void TryConnect()
         {
-            if (!Connectable)
-            {
-                return;
-            }
+            if (!Connectable) return;
 
             foreach (Collider collider in Physics.OverlapSphere(transform.position, connectingMaxDistance, anchorLayers))
             {
-                if (!collider || !collider.attachedRigidbody)
-                {
-                    continue;
-                }
+                if (!collider || !collider.attachedRigidbody) continue;
 
                 USC_TowingAnchor anchor = collider.GetComponent<USC_TowingAnchor>();
                 if (anchor)
@@ -179,16 +181,10 @@ namespace UdonSimpleCars
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!other || !Connectable)
-            {
-                return;
-            }
+            if (!other || !Connectable) return;
 
             Rigidbody targetRigidbody = other.attachedRigidbody;
-            if (!targetRigidbody)
-            {
-                return;
-            }
+            if (!targetRigidbody) return;
 
             USC_TowingAnchor targetAnchor = other.GetComponent<USC_TowingAnchor>();
             if (!targetAnchor) return;
@@ -229,19 +225,15 @@ namespace UdonSimpleCars
 
         private void Connect(USC_TowingAnchor targetAnchor)
         {
-            if (targetAnchor.vehicleRigidbody == attachedRigidbody || !MatchKeywords(keywords, targetAnchor.keywords)) return;
+            if (targetAnchor.attachedRigidbody == attachedRigidbody || !MatchKeywords(keywords, targetAnchor.keywords)) return;
 
             if (syncOwnership)
             {
-                if (!Networking.IsOwner(attachedRigidbody.gameObject)) return;
-                Networking.SetOwner(Networking.LocalPlayer, gameObject);
-                Networking.SetOwner(Networking.LocalPlayer, targetAnchor.vehicleRigidbody.gameObject);
+                if (!Networking.IsOwner(attachedGameObject)) return;
+                Networking.SetOwner(Networking.LocalPlayer, targetAnchor.ownerDetector);
             }
-            else
-            {
-                if (!Networking.IsOwner(targetAnchor.ownerDetector)) return;
-                Networking.SetOwner(Networking.LocalPlayer, gameObject);
-            }
+            else if (!Networking.IsOwner(targetAnchor.ownerDetector)) return;
+            Networking.SetOwner(Networking.LocalPlayer, gameObject);
 
             ConnectedAnchor = targetAnchor;
             RequestSerialization();

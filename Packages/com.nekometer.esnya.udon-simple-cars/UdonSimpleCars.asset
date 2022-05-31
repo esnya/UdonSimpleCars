@@ -126,6 +126,26 @@ MonoBehaviour:
         objectReference: {fileID: 0}
         value: 0.1
         arrayItems: []
+  - prefabInstance: {fileID: 1996720207628058880, guid: 615f8ed5e7b171c4fa9ad0b866633afa,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Packages/com.nekometer.esnya.udon-simple-cars/Prefabs/Towing/RemotePusher.prefab
+    udonVariables:
+    - udonInstance: {fileID: 957546510548963525, guid: 615f8ed5e7b171c4fa9ad0b866633afa,
+        type: 3}
+      gameObjectName: RemotePusher
+      variables:
+      - symbolName: maxForce
+        objectReference: {fileID: 0}
+        value: 80
+        arrayItems: []
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 10000
+        arrayItems: []
+      - symbolName: wakeUpThroshold
+        objectReference: {fileID: 0}
+        value: 1
+        arrayItems: []
   - prefabInstance: {fileID: 4741969065646753558, guid: aa9f37f64eaece645a7b6d3929c05a07,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Packages/com.nekometer.esnya.udon-simple-cars/Prefabs/Towing/TowBar.prefab
@@ -194,6 +214,15 @@ MonoBehaviour:
         objectReference: {fileID: 0}
         value: 1
         arrayItems: []
+      - symbolName: keyword
+        objectReference: {fileID: 0}
+        value: DEFAULT
+        arrayItems: []
+      - symbolName: keywords
+        objectReference: {fileID: 0}
+        value: System.String[]
+        arrayItems:
+        - DEFAULT
       - symbolName: maxAcceleration
         objectReference: {fileID: 0}
         value: 20
@@ -226,7 +255,7 @@ MonoBehaviour:
         arrayItems: []
       - symbolName: wakeUpDistance
         objectReference: {fileID: 0}
-        value: 0.5
+        value: 0.02
         arrayItems: []
   - prefabInstance: {fileID: 1306309843375642412, guid: 2b4cb2ba00a02be42910ad4ccfe55a96,
       type: 3}
@@ -256,6 +285,15 @@ MonoBehaviour:
         objectReference: {fileID: 0}
         value: 1
         arrayItems: []
+      - symbolName: keyword
+        objectReference: {fileID: 0}
+        value: DEFAULT
+        arrayItems: []
+      - symbolName: keywords
+        objectReference: {fileID: 0}
+        value: System.String[]
+        arrayItems:
+        - DEFAULT
       - symbolName: maxAcceleration
         objectReference: {fileID: 0}
         value: 20
@@ -284,11 +322,11 @@ MonoBehaviour:
         arrayItems: []
       - symbolName: syncOwnership
         objectReference: {fileID: 0}
-        value: True
+        value: False
         arrayItems: []
       - symbolName: wakeUpDistance
         objectReference: {fileID: 0}
-        value: 0.1
+        value: 0.02
         arrayItems: []
   - prefabInstance: {fileID: 8311205895600088585, guid: fdec5079b5262f6419ce6e58b22b3cd2,
       type: 3}
