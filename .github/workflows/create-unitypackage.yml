@@ -27,7 +27,7 @@ jobs:
           path: node_modules
           key: ${{runner.os}}-node_modules
       - name: Install dependencies
-        run: npm install -D semantic-release @semantic-release/github @semantic-release/exec semantic-release-gitmoji
+        run: npm install -D semantic-release @semantic-release/git @semantic-release/github @semantic-release/exec semantic-release-gitmoji
 
       - name: Download artifacts
         uses: actions/download-artifact@v2
