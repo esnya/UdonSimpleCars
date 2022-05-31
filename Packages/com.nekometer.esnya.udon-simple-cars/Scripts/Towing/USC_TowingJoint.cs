@@ -120,8 +120,8 @@ namespace UdonSimpleCars
                 }
                 else if (!Networking.IsOwner(ownerDetector) || syncOwnership && !Networking.IsOwner(attachedGameObject))
                 {
-                    InstantDesconnect();
-                    SendCustomNetworkEvent(NetworkEventTarget.All, nameof(TryConnect));
+                    SendCustomNetworkEvent(NetworkEventTarget.All, nameof(Reconnect));
+                    RequestSerialization();
                 }
                 else
                 {
@@ -164,15 +164,18 @@ namespace UdonSimpleCars
 
         public void TryConnect()
         {
+            Debug.Log($"[USC] TryConnect");
             if (!Connectable) return;
 
             foreach (Collider collider in Physics.OverlapSphere(transform.position, connectingMaxDistance, anchorLayers))
             {
                 if (!collider || !collider.attachedRigidbody) continue;
+                Debug.Log($"[USC] {collider}");
 
                 USC_TowingAnchor anchor = collider.GetComponent<USC_TowingAnchor>();
                 if (anchor)
                 {
+                    Debug.Log($"[USC] {anchor}");
                     Connect(anchor);
                     return;
                 }
@@ -182,12 +185,15 @@ namespace UdonSimpleCars
         private void OnTriggerEnter(Collider other)
         {
             if (!other || !Connectable) return;
+            Debug.Log($"[USC] TriggerEnter {other}");
 
             Rigidbody targetRigidbody = other.attachedRigidbody;
             if (!targetRigidbody) return;
+            Debug.Log($"[USC] {targetRigidbody}");
 
             USC_TowingAnchor targetAnchor = other.GetComponent<USC_TowingAnchor>();
             if (!targetAnchor) return;
+            Debug.Log($"[USC] {targetAnchor}");
 
             Connect(targetAnchor);
         }
@@ -225,37 +231,49 @@ namespace UdonSimpleCars
 
         private void Connect(USC_TowingAnchor targetAnchor)
         {
+            Debug.Log($"[USC] Connect {targetAnchor}");
+
             if (targetAnchor.attachedRigidbody == attachedRigidbody || !MatchKeywords(keywords, targetAnchor.keywords)) return;
 
+            Debug.Log($"[USC] SyncOwnership = {syncOwnership}");
             if (syncOwnership)
             {
+                Debug.Log($"[USC] IsOwner = {Networking.IsOwner(attachedGameObject)}");
                 if (!Networking.IsOwner(attachedGameObject)) return;
+                Debug.Log($"[USC] Getting Owner {targetAnchor.ownerDetector}");
                 Networking.SetOwner(Networking.LocalPlayer, targetAnchor.ownerDetector);
             }
-            else if (!Networking.IsOwner(targetAnchor.ownerDetector)) return;
+            else
+            {
+                Debug.Log($"[USC] IsOwner = {Networking.IsOwner(targetAnchor.ownerDetector)}");
+                if (!Networking.IsOwner(targetAnchor.ownerDetector)) return;
+            }
+                Debug.Log($"[USC] Getting Owner {gameObject}");
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
 
             ConnectedAnchor = targetAnchor;
             RequestSerialization();
+            Debug.Log($"[USC] Connected");
         }
 
         public void Disconnect()
         {
-            InstantDesconnect();
+            ConnectedAnchor = null;
             reconnectableTime = Time.time + reconnectionDelay;
             trigger.enabled = false;
             SendCustomEventDelayedSeconds(nameof(_ReActivate), reconnectionDelay * 0.5f);
-            RequestSerialization();
         }
 
-        public void InstantDesconnect()
-        {
-            ConnectedAnchor = null;
-        }
 
         public void _ReActivate()
         {
             trigger.enabled = true;
+        }
+
+        public void Reconnect()
+        {
+            ConnectedAnchor = null;
+            TryConnect();
         }
 
         private void OnConnected()
