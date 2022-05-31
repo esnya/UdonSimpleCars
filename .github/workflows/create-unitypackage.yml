@@ -37,4 +37,4 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: cd Packages/com.nekometer.esnya.udon-simple-cars && npx semantic-release
