@@ -12,30 +12,9 @@ jobs:
       - id: package_name
         run: echo "::set-output name=package_name::$(echo ${GITHUB_REPOSITORY##*/})-$(echo ${GITHUB_REF##refs/*/})"
 
-  build:
-    needs: prebuild
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: |
-          find Assets -name \*.meta > metaList
-          mkdir dist
-          cat metaList
-      - uses: pCYSl5EDgo/create-unitypackage@master
-        with:
-          package-path: 'dist/${{needs.prebuild.outputs.package_name}}.unitypackage'
-          include-files: metaList
-      - name: Upload package artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: '${{needs.prebuild.outputs.package_name}}.unitypackage'
-          path: 'dist/${{needs.prebuild.outputs.package_name}}.unitypackage'
-          if-no-files-found: error
-
   release:
     needs:
       - prebuild
-      - build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
