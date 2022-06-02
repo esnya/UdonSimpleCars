@@ -328,6 +328,141 @@ MonoBehaviour:
         objectReference: {fileID: 0}
         value: 0.02
         arrayItems: []
+  - prefabInstance: {fileID: 8030485520611389732, guid: fc1132c1bb1c2ea4f9e4f843d286817c,
+      type: 3}
+    prefabPath: Assets/UdonSimpleCars/Packages/com.nekometer.esnya.udon-simple-cars/Prefabs/Towing/TowingRope.prefab
+    udonVariables:
+    - udonInstance: {fileID: 5812566399923431160, guid: fc1132c1bb1c2ea4f9e4f843d286817c,
+        type: 3}
+      gameObjectName: HandPusher
+      variables:
+      - symbolName: maxForce
+        objectReference: {fileID: 0}
+        value: 80
+        arrayItems: []
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 10000
+        arrayItems: []
+      - symbolName: sync
+        objectReference: {fileID: 0}
+        value: True
+        arrayItems: []
+      - symbolName: wakeUpDistance
+        objectReference: {fileID: 0}
+        value: 0.1
+        arrayItems: []
+    - udonInstance: {fileID: 2583420529386405337, guid: fc1132c1bb1c2ea4f9e4f843d286817c,
+        type: 3}
+      gameObjectName: HandPusher
+      variables:
+      - symbolName: maxForce
+        objectReference: {fileID: 0}
+        value: 80
+        arrayItems: []
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 10000
+        arrayItems: []
+      - symbolName: sync
+        objectReference: {fileID: 0}
+        value: True
+        arrayItems: []
+      - symbolName: wakeUpDistance
+        objectReference: {fileID: 0}
+        value: 0.1
+        arrayItems: []
+    - udonInstance: {fileID: 2591044020441828419, guid: fc1132c1bb1c2ea4f9e4f843d286817c,
+        type: 3}
+      gameObjectName: RemotePusher
+      variables:
+      - symbolName: maxForce
+        objectReference: {fileID: 0}
+        value: 80
+        arrayItems: []
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 10000
+        arrayItems: []
+      - symbolName: wakeUpThroshold
+        objectReference: {fileID: 0}
+        value: 1
+        arrayItems: []
+    - udonInstance: {fileID: 5670164713817441832, guid: fc1132c1bb1c2ea4f9e4f843d286817c,
+        type: 3}
+      gameObjectName: TowingAnchor
+      variables:
+      - symbolName: keyword
+        objectReference: {fileID: 0}
+        value: BOLT
+        arrayItems: []
+    - udonInstance: {fileID: 7157576427079021628, guid: fc1132c1bb1c2ea4f9e4f843d286817c,
+        type: 3}
+      gameObjectName: TowingJoint
+      variables:
+      - symbolName: anchorLayers
+        objectReference: {fileID: 0}
+        value: UnityEngine.LayerMask
+        arrayItems: []
+      - symbolName: breakingDistance
+        objectReference: {fileID: 0}
+        value: 10
+        arrayItems: []
+      - symbolName: connectingMaxDistance
+        objectReference: {fileID: 0}
+        value: 0.5
+        arrayItems: []
+      - symbolName: damper
+        objectReference: {fileID: 0}
+        value: 10
+        arrayItems: []
+      - symbolName: fakeMassResponse
+        objectReference: {fileID: 0}
+        value: 1
+        arrayItems: []
+      - symbolName: keyword
+        objectReference: {fileID: 0}
+        value: DEFAULT
+        arrayItems: []
+      - symbolName: keywords
+        objectReference: {fileID: 0}
+        value: System.String[]
+        arrayItems:
+        - DEFAULT
+      - symbolName: maxAcceleration
+        objectReference: {fileID: 0}
+        value: 20
+        arrayItems: []
+      - symbolName: minSteeringSpeed
+        objectReference: {fileID: 0}
+        value: 1
+        arrayItems: []
+      - symbolName: onConnectedSound
+        objectReference: {fileID: 8300000, guid: 64ca17c1188412347901cf9e24b1ed13,
+          type: 3}
+        value: CatapultLock (UnityEngine.AudioClip)
+        arrayItems: []
+      - symbolName: onDisconnectedSound
+        objectReference: {fileID: 8300000, guid: 16f6f99eac353cd488cd2e3fbd945510,
+          type: 3}
+        value: Reloading (UnityEngine.AudioClip)
+        arrayItems: []
+      - symbolName: reconnectionDelay
+        objectReference: {fileID: 0}
+        value: 10
+        arrayItems: []
+      - symbolName: spring
+        objectReference: {fileID: 0}
+        value: 10
+        arrayItems: []
+      - symbolName: syncOwnership
+        objectReference: {fileID: 0}
+        value: False
+        arrayItems: []
+      - symbolName: wakeUpDistance
+        objectReference: {fileID: 0}
+        value: 0.02
+        arrayItems: []
   - prefabInstance: {fileID: 8311205895600088585, guid: fdec5079b5262f6419ce6e58b22b3cd2,
       type: 3}
     prefabPath: Assets/UdonSimpleCars/Packages/com.nekometer.esnya.udon-simple-cars/SampleAssets/UdonSimpleCar.prefab

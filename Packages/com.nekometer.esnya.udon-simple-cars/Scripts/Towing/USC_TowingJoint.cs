@@ -156,7 +156,7 @@ namespace UdonSimpleCars
                 prevPosition = position;
                 prevVelocity = velocity;
 
-                attachedRigidbody.AddForceAtPosition(Vector3.ClampMagnitude(acceleration * (ConnectedMass / attachedRigidbody.mass), maxAcceleration), position, ForceMode.Acceleration);
+                attachedRigidbody.AddForceAtPosition(acceleration * ConnectedMass, position, ForceMode.Force);
             }
         }
 
