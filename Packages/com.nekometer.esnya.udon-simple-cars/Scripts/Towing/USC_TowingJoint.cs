@@ -37,15 +37,18 @@ namespace UdonSimpleCars
         private GameObject ownerDetector;
         private Rigidbody connectedRigidbody;
         private Transform connectedTransform;
-        private WheelCollider connectedWheelCollider;
+        private WheelCollider[] connectedWheelColliders;
         private USC_TowingAnchor _connectedAnchor;
         private USC_TowingAnchor ConnectedAnchor
         {
             set
             {
-                if (!value && connectedWheelCollider)
+                if (!value && connectedWheelColliders != null)
                 {
-                    connectedWheelCollider.steerAngle = 0;
+                    foreach (var wheel in connectedWheelColliders)
+                    {
+                        wheel.steerAngle = 0;
+                    }
                 }
                 _connectedAnchor = value;
 
@@ -54,7 +57,7 @@ namespace UdonSimpleCars
 
                 ownerDetector = value ? value.ownerDetector : null;
                 connectedRigidbody = value ? value.attachedRigidbody : null;
-                connectedWheelCollider = value ? value.attachedWheelCollider : null;
+                connectedWheelColliders = value ? value.steeringWheels : null;
             }
             get => _connectedAnchor;
         }
@@ -75,6 +78,10 @@ namespace UdonSimpleCars
                     {
                         OnDisconnected();
                     }
+                }
+                if (!value && ConnectedAnchor)
+                {
+                    ConnectedAnchor = null;
                 }
                 _connected = value;
             }
@@ -110,8 +117,8 @@ namespace UdonSimpleCars
         {
             if (ConnectedAnchor != null)
             {
-                Vector3 anchorPosition = connectedTransform.position;
-                Vector3 anchorToJoint = anchorPosition - transform.position;
+                var anchorPosition = connectedTransform.position;
+                var anchorToJoint = transform.position - anchorPosition;
 
                 float anchorDistance = anchorToJoint.magnitude;
                 if (anchorDistance > breakingDistance)
@@ -125,25 +132,32 @@ namespace UdonSimpleCars
                 }
                 else
                 {
-                    Vector3 jointVelocity = attachedRigidbody.velocity;
-                    Vector3 connectedVelocity = connectedRigidbody.velocity;
-                    Vector3 connectedToJoint = jointVelocity - connectedVelocity;
-                    connectedRigidbody.AddForceAtPosition(Vector3.ClampMagnitude((connectedToJoint * damper) - (anchorToJoint * spring), maxAcceleration), anchorPosition, ForceMode.Acceleration);
+                    var jointVelocity = attachedRigidbody.velocity;
+                    var connectedVelocity = connectedRigidbody.velocity;
+                    var connectedToJoint = jointVelocity - connectedVelocity;
+                    var acceleration = Vector3.ClampMagnitude((connectedToJoint * damper) + (anchorToJoint * spring), maxAcceleration);
+                    connectedRigidbody.AddForceAtPosition(acceleration, anchorPosition, ForceMode.Acceleration);
 
                     bool wakeUp = !prevWakeUp && connectedToJoint.magnitude > wakeUpDistance;
                     if (wakeUp)
                     {
-                        SetConnectedWheelsMotorTorque(1.0e-36f);
+                        SetConnectedWheelsMotorTorque(connectedRigidbody, 1.0e-36f);
                     }
                     if (prevWakeUp)
                     {
-                        SetConnectedWheelsMotorTorque(0.0f);
+                        SetConnectedWheelsMotorTorque(connectedRigidbody, 0.0f);
                     }
                     prevWakeUp = wakeUp;
 
-                    if (connectedWheelCollider)
+                    if (connectedWheelColliders != null)
                     {
-                        connectedWheelCollider.steerAngle = Vector3.SignedAngle(connectedRigidbody.transform.forward, transform.forward, Vector3.up);
+                        var connectedForward = connectedRigidbody.transform.forward;
+                        var jointAngle = Vector3.SignedAngle(connectedForward, acceleration.normalized, Vector3.up);
+                        var steerAngle = Mathf.Lerp(jointAngle, 0, acceleration.magnitude);
+                        foreach (var wheel in connectedWheelColliders)
+                        {
+                            wheel.steerAngle = steerAngle;
+                        }
                     }
                 }
             }
@@ -157,6 +171,14 @@ namespace UdonSimpleCars
                 prevVelocity = velocity;
 
                 attachedRigidbody.AddForceAtPosition(acceleration * ConnectedMass, position, ForceMode.Force);
+            }
+        }
+
+        private void Update()
+        {
+            if (Connected && Networking.IsOwner(gameObject) && !ConnectedAnchor)
+            {
+                SendCustomNetworkEvent(NetworkEventTarget.All, nameof(Disconnect));
             }
         }
 
@@ -200,19 +222,25 @@ namespace UdonSimpleCars
 
         public override void Interact()
         {
-            SendCustomNetworkEvent(NetworkEventTarget.Owner, nameof(Disconnect));
+            Networking.SetOwner(Networking.LocalPlayer, gameObject);
+            Disconnect();
         }
 
-        private void SetConnectedWheelsMotorTorque(float value)
+        private void SetConnectedWheelsMotorTorque(Rigidbody rigidbody, float value)
         {
-            if (!connectedRigidbody)
+            if (!rigidbody)
             {
                 return;
             }
 
-            foreach (WheelCollider wheel in connectedRigidbody.GetComponentsInChildren<WheelCollider>())
+            foreach (var wheel in rigidbody.GetComponentsInChildren<WheelCollider>())
             {
                 wheel.motorTorque = value;
+            }
+
+            foreach (var joint in rigidbody.GetComponents<Joint>())
+            {
+                SetConnectedWheelsMotorTorque(joint.connectedBody, value);
             }
         }
 
@@ -248,7 +276,7 @@ namespace UdonSimpleCars
                 Debug.Log($"[USC] IsOwner = {Networking.IsOwner(targetAnchor.ownerDetector)}");
                 if (!Networking.IsOwner(targetAnchor.ownerDetector)) return;
             }
-                Debug.Log($"[USC] Getting Owner {gameObject}");
+            Debug.Log($"[USC] Getting Owner {gameObject}");
             Networking.SetOwner(Networking.LocalPlayer, gameObject);
 
             ConnectedAnchor = targetAnchor;
@@ -259,6 +287,7 @@ namespace UdonSimpleCars
         public void Disconnect()
         {
             ConnectedAnchor = null;
+            RequestSerialization();
             reconnectableTime = Time.time + reconnectionDelay;
             trigger.enabled = false;
             SendCustomEventDelayedSeconds(nameof(_ReActivate), reconnectionDelay * 0.5f);

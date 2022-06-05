@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1205091094057821825}
   - component: {fileID: 8224791771255036249}
   - component: {fileID: 4666553310548358406}
+  - component: {fileID: 9181522351205897097}
   - component: {fileID: 637224382792288345}
   m_Layer: 17
   m_Name: TowingJoint
@@ -142,6 +143,24 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &9181522351205897097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1306309843375642412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -617992517, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Gain: 100
+  Far: 40
+  Near: 0
+  VolumetricRadius: 0
+  EnableSpatialization: 1
+  UseAudioSourceVolumeCurve: 0
 --- !u!114 &637224382792288345
 MonoBehaviour:
   m_ObjectHideFlags: 0

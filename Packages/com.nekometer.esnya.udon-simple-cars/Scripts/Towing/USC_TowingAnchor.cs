@@ -14,11 +14,11 @@ namespace UdonSimpleCars
         [Tooltip("Default: VRCObjectSync in parent or find from SaccFlightAndVehicles")]
         public GameObject ownerDetector;
         public string keyword = "DEFAULT";
+        public WheelCollider[] steeringWheels = { };
         #endregion
 
         #region NonSerialized Variables
         [NonSerialized] public Rigidbody attachedRigidbody;
-        [NonSerialized] public WheelCollider attachedWheelCollider;
         [NonSerialized] public string[] keywords;
         #endregion
 
@@ -28,7 +28,11 @@ namespace UdonSimpleCars
             attachedRigidbody = transform.parent.GetComponentInParent<Rigidbody>();
             if (!ownerDetector) ownerDetector = attachedRigidbody.gameObject;
 
-            attachedWheelCollider = GetComponentInParent<WheelCollider>();
+            if (steeringWheels == null || steeringWheels.Length == 0)
+            {
+                var wheelInParent = GetComponentInParent<WheelCollider>();
+                steeringWheels = wheelInParent ? new[] { wheelInParent } : new WheelCollider[0];
+            }
 
             keywords = keyword.Split(',');
         }
