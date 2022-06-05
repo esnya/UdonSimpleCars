@@ -3,6 +3,7 @@ using UdonSharp;
 using UdonToolkit;
 using UnityEngine;
 using VRC.SDKBase;
+using VRC.Udon.Common;
 
 namespace UdonSimpleCars
 {
@@ -12,7 +13,8 @@ namespace UdonSimpleCars
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     public class USC_Seat : UdonSharpBehaviour
     {
-        [Popup("GetButtonList")] public string getOutButton = "Oculus_CrossPlatform_Button4";
+        public bool getOutByJump = true;
+        [HideIf("@getOutByJump")][Popup("GetButtonList")] public string getOutButton = "Oculus_CrossPlatform_Button4";
         public KeyCode getOutKey = KeyCode.Return;
         public bool isDriver = true;
         private USC_Car car;
@@ -60,7 +62,7 @@ namespace UdonSimpleCars
 
         private void Update()
         {
-            if (Input.GetKey(getOutKey) || Input.GetButton(getOutButton))
+            if (Input.GetKey(getOutKey) || !getOutByJump && Input.GetButton(getOutButton))
             {
                 station.ExitStation(localPlayer);
             }
@@ -68,7 +70,7 @@ namespace UdonSimpleCars
 
         public override void Interact()
         {
-            if (!localPlayer.IsOwner(gameObject))
+            if (!localPlayer.IsOwner(obj: gameObject))
             { Networking.SetOwner(localPlayer, gameObject); }
             Seat.rotation = Quaternion.Euler(0, Seat.eulerAngles.y, 0);//fixes offset seated position when getting in a rolled/pitched vehicle in VR
             localPlayer.UseAttachedStation();
@@ -176,6 +178,14 @@ namespace UdonSimpleCars
             {
                 Vector3 newpos = (new Vector3(0, _adjustedPos.x, _adjustedPos.y));
                 Seat.localPosition = newpos;
+            }
+        }
+
+        public override void InputJump(bool value, UdonInputEventArgs args)
+        {
+            if (value && getOutByJump && localPlayer.IsUserInVR())
+            {
+                station.ExitStation(localPlayer);
             }
         }
 
