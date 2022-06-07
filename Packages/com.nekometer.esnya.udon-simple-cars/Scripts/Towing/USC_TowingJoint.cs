@@ -151,9 +151,7 @@ namespace UdonSimpleCars
 
                     if (connectedWheelColliders != null)
                     {
-                        var connectedForward = connectedRigidbody.transform.forward;
-                        var jointAngle = Vector3.SignedAngle(connectedForward, acceleration.normalized, Vector3.up);
-                        var steerAngle = Mathf.Lerp(jointAngle, 0, acceleration.magnitude);
+                        var steerAngle = Vector3.SignedAngle(connectedTransform.forward, transform.forward, Vector3.up);
                         foreach (var wheel in connectedWheelColliders)
                         {
                             wheel.steerAngle = steerAngle;
