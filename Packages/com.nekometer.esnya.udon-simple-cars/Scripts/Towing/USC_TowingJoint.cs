@@ -95,6 +95,8 @@ namespace UdonSimpleCars
         private readonly float prevSpeed;
         private readonly bool prevStartMoving;
         private bool prevWakeUp;
+        private Vector3 prevJointPosition;
+        private Vector3 prevAnchorPosition;
 
         private float ConnectedMass
         {
@@ -132,9 +134,13 @@ namespace UdonSimpleCars
                 }
                 else
                 {
-                    var jointVelocity = attachedRigidbody.velocity;
+                    var jointPosition = transform.position;
+                    var jointVelocity = (jointPosition - prevJointPosition) / Time.fixedDeltaTime;
+                    prevJointPosition = jointPosition;
                     var connectedVelocity = connectedRigidbody.velocity;
-                    var connectedToJoint = jointVelocity - connectedVelocity;
+                    var anchorVelocity = (anchorPosition - prevAnchorPosition) / Time.fixedDeltaTime;
+                    prevAnchorPosition = anchorPosition;
+                    var connectedToJoint = jointVelocity - anchorVelocity;
                     var acceleration = Vector3.ClampMagnitude((connectedToJoint * damper) + (anchorToJoint * spring), maxAcceleration);
                     connectedRigidbody.AddForceAtPosition(acceleration, anchorPosition, ForceMode.Acceleration);
 
@@ -280,6 +286,9 @@ namespace UdonSimpleCars
             ConnectedAnchor = targetAnchor;
             RequestSerialization();
             // Debug.Log($"[USC] Connected");
+
+            prevJointPosition = transform.position;
+            prevAnchorPosition = connectedTransform.position;
         }
 
         public void Disconnect()
