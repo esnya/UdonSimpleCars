@@ -20,7 +20,7 @@ namespace UdonSimpleCars
     [UdonBehaviourSyncMode(BehaviourSyncMode.Continuous)]
     public class USC_Car : UdonSharpBehaviour
     {
-        [SectionHeader("Specs")]
+        [Header("Specs")]
         public float accelerationTorque = 1.0f;
         [Range(0, 10)] public float accelerationResponse = 1f;
         public float brakeTorque = 1.0f;
@@ -29,30 +29,30 @@ namespace UdonSimpleCars
         [Range(0, 10)] public float steeringResponse = 1f;
         public Transform centerOfMass;
 
-        [SectionHeader("Sounds")]
+        [Header("Sounds")]
         public AudioSource engineSound;
         public AnimationCurve engineSoundVolume = AnimationCurve.EaseInOut(0, 0.8f, 1, 1), engineSoundPitch = AnimationCurve.EaseInOut(0, 1, 1, 1.5f);
 
-        [SectionHeader("Others")]
+        [Header("Others")]
         public Transform steeringWheel;
         public Vector3 steeringWheelAxis = Vector3.forward;
         public float steeringWheelMaxAngle = 16 * 40;
         public GameObject operatingOnly, inVehicleOnly, driverOnly, backGearOnly, brakingOnly;
 
-        [SectionHeader("VR Inputs")]
+        [Header("VR Inputs")]
         [Popup("GetAxisList")] public string steeringAxis = "Oculus_CrossPlatform_SecondaryThumbstickHorizontal";
         [Popup("GetAxisList")] public string accelerationAxis = "Oculus_CrossPlatform_SecondaryIndexTrigger";
         [Popup("GetAxisList")] public string brakeAxis = "Oculus_CrossPlatform_PrimaryIndexTrigger";
         [Popup("GetAxisList")] public string backGearAxis = "Vertical";
 
-        [SectionHeader("Keyboard Inputs")]
+        [Header("Keyboard Inputs")]
         public KeyCode steeringKeyLeft = KeyCode.A;
         public KeyCode steeringKeyRight = KeyCode.D;
         public KeyCode accelerationKey = KeyCode.LeftShift;
         public KeyCode backAccelerationKey = KeyCode.LeftControl;
         public KeyCode brakeKey = KeyCode.B;
 
-        [SectionHeader("Animator Parameterss")]
+        [Header("Animator Parameterss")]
         [Tooltip("Bool")] public string isOperatingParameter = "IsOperating";
         [Tooltip("Float")] public string accelerationParameter = "Acceleration";
         [Tooltip("Float")] public string brakeParameter = "Brake";
@@ -62,11 +62,7 @@ namespace UdonSimpleCars
         [Tooltip("Bool")] public string localIsDriverParameter = "LocalIsDriver";
         [Tooltip("Bool")] public string localInVehicleParameter = "LocalInVehicle";
 
-        [SectionHeader("Editor")]
-        public GameObject respawnerPrefab;
-
-        [SectionHeader("Wheels")]
-        [HelpBox("Managed by USC_Wheel(s)")]
+        [Header("Wheels")]
         public WheelCollider[] wheels = { };
         public WheelCollider[] steeredWheels = { };
         public WheelCollider[] drivingWheels = { };
@@ -75,7 +71,7 @@ namespace UdonSimpleCars
         public WheelCollider[] detachedWheels = { };
         public Transform[] wheelVisuals = { };
 
-        [SectionHeader("Others")]
+        [Header("Others")]
         [Tooltip("Reparented under parent of the vehicle on Start. Resets positions on respawns.")] public Transform detachedObjects;
 
         private Animator animator;
@@ -504,23 +500,6 @@ namespace UdonSimpleCars
             "Oculus_CrossPlatform_Button4",
             "Oculus_CrossPlatform_Button2",
         };
-
-
-        [Button("Add Respawner", true)]
-        public void AddRespawner()
-        {
-            var respawner = Instantiate(respawnerPrefab);
-            respawner.transform.parent = transform.parent;
-            respawner.transform.position = transform.TransformPoint(respawnerPrefab.transform.localPosition);
-
-            respawner.name = respawner.name.Replace("(Clone)", $"({gameObject.name})");
-
-            var respawnerUdon = respawner.GetUdonSharpComponent<USC_Respawner>();
-            respawnerUdon.target = this;
-            respawnerUdon.ApplyProxyModifications();
-
-            Undo.RegisterCreatedObjectUndo(respawner, "Add Respawner");
-        }
 #endif
     }
 }

@@ -1794,7 +1794,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8311205895693598331}
   - component: {fileID: 8311205895693598328}
-  - component: {fileID: 6175065190278401515}
   m_Layer: 17
   m_Name: Wheel.RL
   m_TagString: Untagged
@@ -1846,18 +1845,6 @@ WheelCollider:
     m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
---- !u!114 &6175065190278401515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8311205895693598330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0b56fdad804b0d43807dce7693b834a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8311205895856690607
 GameObject:
   m_ObjectHideFlags: 0
@@ -1868,7 +1855,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8311205895856690604}
   - component: {fileID: 8311205895856690605}
-  - component: {fileID: 5329487354829655193}
   m_Layer: 17
   m_Name: Wheel.FL
   m_TagString: Untagged
@@ -1920,18 +1906,6 @@ WheelCollider:
     m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
---- !u!114 &5329487354829655193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8311205895856690607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0b56fdad804b0d43807dce7693b834a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8311205895916332077
 GameObject:
   m_ObjectHideFlags: 0
@@ -2021,7 +1995,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8311205896164849315}
   - component: {fileID: 8311205896164849312}
-  - component: {fileID: 6662045182965436981}
   m_Layer: 17
   m_Name: Wheel.FR
   m_TagString: Untagged
@@ -2073,18 +2046,6 @@ WheelCollider:
     m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
---- !u!114 &6662045182965436981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8311205896164849314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0b56fdad804b0d43807dce7693b834a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8311205896242710736
 GameObject:
   m_ObjectHideFlags: 0
@@ -2095,7 +2056,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8311205896242710737}
   - component: {fileID: 8311205896242710742}
-  - component: {fileID: 2577880027193508572}
   m_Layer: 17
   m_Name: Wheel.RR
   m_TagString: Untagged
@@ -2147,18 +2107,6 @@ WheelCollider:
     m_AsymptoteValue: 0.75
     m_Stiffness: 1
   m_Enabled: 1
---- !u!114 &2577880027193508572
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8311205896242710736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0b56fdad804b0d43807dce7693b834a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8311205896542626617
 GameObject:
   m_ObjectHideFlags: 0
@@ -2668,15 +2616,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd08a4ba72ae188439fae9e40a4dee8f, type: 3}
---- !u!82 &8311205894919746665 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 2973368669135221509, guid: bd08a4ba72ae188439fae9e40a4dee8f,
-    type: 3}
-  m_PrefabInstance: {fileID: 6491044646431901548}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8311205894919746670 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2973368669135221506, guid: bd08a4ba72ae188439fae9e40a4dee8f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6491044646431901548}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &8311205894919746665 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 2973368669135221509, guid: bd08a4ba72ae188439fae9e40a4dee8f,
     type: 3}
   m_PrefabInstance: {fileID: 6491044646431901548}
   m_PrefabAsset: {fileID: 0}
