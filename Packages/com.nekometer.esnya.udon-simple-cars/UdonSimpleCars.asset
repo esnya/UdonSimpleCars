@@ -29,10 +29,6 @@ MonoBehaviour:
         objectReference: {fileID: 0}
         value: Oculus_CrossPlatform_Button4
         arrayItems: []
-      - symbolName: getOutByJump
-        objectReference: {fileID: 0}
-        value: True
-        arrayItems: []
       - symbolName: getOutKey
         objectReference: {fileID: 0}
         value: Return
