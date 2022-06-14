@@ -94,7 +94,6 @@ namespace UdonSimpleCars
         private Vector3 prevVelocity;
         private readonly float prevSpeed;
         private readonly bool prevStartMoving;
-        private bool prevWakeUp;
         private Vector3 prevJointPosition;
         private Vector3 prevAnchorPosition;
 
@@ -102,6 +101,18 @@ namespace UdonSimpleCars
         {
             set => _connectedMass = value;
             get => _connectedMass;
+        }
+
+        bool _isSleeping = true;
+        private bool IsSleeping
+        {
+            set {
+                if (value != _isSleeping)
+                {
+                    AddConnectedWheelsMotorTorque(connectedRigidbody, value ? 2.0e-36f : -2.0e-36f);
+                }
+                _isSleeping = value;
+            }
         }
 
         private void Start()
@@ -144,16 +155,8 @@ namespace UdonSimpleCars
                     var acceleration = Vector3.ClampMagnitude((connectedToJoint * damper) + (anchorToJoint * spring), maxAcceleration);
                     connectedRigidbody.AddForceAtPosition(acceleration, anchorPosition, ForceMode.Acceleration);
 
-                    bool wakeUp = !prevWakeUp && connectedToJoint.magnitude > wakeUpDistance;
-                    if (wakeUp)
-                    {
-                        SetConnectedWheelsMotorTorque(connectedRigidbody, 1.0e-36f);
-                    }
-                    if (prevWakeUp)
-                    {
-                        SetConnectedWheelsMotorTorque(connectedRigidbody, 0.0f);
-                    }
-                    prevWakeUp = wakeUp;
+
+                    IsSleeping = connectedToJoint.magnitude < wakeUpDistance;
 
                     if (connectedWheelColliders != null)
                     {
@@ -230,7 +233,7 @@ namespace UdonSimpleCars
             Disconnect();
         }
 
-        private void SetConnectedWheelsMotorTorque(Rigidbody rigidbody, float value)
+        private void AddConnectedWheelsMotorTorque(Rigidbody rigidbody, float value)
         {
             if (!rigidbody)
             {
@@ -239,12 +242,12 @@ namespace UdonSimpleCars
 
             foreach (var wheel in rigidbody.GetComponentsInChildren<WheelCollider>())
             {
-                wheel.motorTorque = value;
+                wheel.motorTorque += value;
             }
 
             foreach (var joint in rigidbody.GetComponents<Joint>())
             {
-                SetConnectedWheelsMotorTorque(joint.connectedBody, value);
+                AddConnectedWheelsMotorTorque(joint.connectedBody, value);
             }
         }
 
@@ -319,6 +322,7 @@ namespace UdonSimpleCars
 
         private void OnDisconnected()
         {
+            IsSleeping = false;
             PlayOneShot(onDisconnectedSound);
         }
 

@@ -25,6 +25,18 @@ namespace UdonSimpleCars
 
         private Vector3 AnchorPosition => transform.parent.TransformPoint(localPosition);
 
+        bool _isSleeping = true;
+        private bool IsSleeping
+        {
+            set {
+                if (value != _isSleeping)
+                {
+                    foreach (var wheel in wheelColliders) wheel.motorTorque += value ? 2.0e-36f : -2.0e-36f;
+                }
+                _isSleeping = value;
+            }
+        }
+
         private void Reset()
         {
             GetComponent<Rigidbody>().isKinematic = true;
@@ -50,7 +62,8 @@ namespace UdonSimpleCars
             force = Vector3.zero;
             transform.localPosition = localPosition;
             transform.localRotation = localRotation;
-            foreach (var wheel in wheelColliders) wheel.motorTorque = 0;
+
+            IsSleeping = false;
         }
 
         public void FixedUpdate()
@@ -59,10 +72,7 @@ namespace UdonSimpleCars
             {
                 attachedRigidbody.AddForceAtPosition(force, AnchorPosition);
 
-                if (force.magnitude > wakeUpThroshold)
-                {
-                    foreach (var wheel in wheelColliders) wheel.motorTorque = 1.0E-32f;
-                }
+                IsSleeping = force.magnitude < wakeUpThroshold;
             }
         }
 
