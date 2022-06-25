@@ -124,6 +124,16 @@ namespace UdonSimpleCars
             keywords = keyword.Split(',');
 
             ConnectedAnchor = null;
+
+            SendCustomEventDelayedSeconds(nameof(_LateStart), 10.0f);
+        }
+
+        public void _LateStart()
+        {
+            if (Networking.IsMaster)
+            {
+                SendCustomNetworkEvent(NetworkEventTarget.All , nameof(TryConnect));
+            }
         }
 
         private void FixedUpdate()
