@@ -38,6 +38,7 @@ namespace UdonSimpleCars
         public Vector3 steeringWheelAxis = Vector3.forward;
         public float steeringWheelMaxAngle = 16 * 40;
         public GameObject operatingOnly, inVehicleOnly, driverOnly, backGearOnly, brakingOnly;
+        [Tooltip("Reparented under parent of the vehicle on Start. Resets positions on respawns.")] public Transform detachedObjects;
 
         [Header("VR Inputs")]
         [Popup("GetAxisList")] public string steeringAxis = "Oculus_CrossPlatform_SecondaryThumbstickHorizontal";
@@ -70,9 +71,6 @@ namespace UdonSimpleCars
         // public WheelCollider[] parkingBrakeWheels = {};
         public WheelCollider[] detachedWheels = { };
         public Transform[] wheelVisuals = { };
-
-        [Header("Others")]
-        [Tooltip("Reparented under parent of the vehicle on Start. Resets positions on respawns.")] public Transform detachedObjects;
 
         private Animator animator;
         private Rigidbody vehicleRigidbody;
