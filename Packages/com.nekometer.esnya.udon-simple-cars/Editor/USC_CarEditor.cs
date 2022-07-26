@@ -106,7 +106,7 @@ namespace UdonSimpleCars
             }
         }
 
-        private void OnWheelsGUI(SerializedProperty property)
+        private void OnWheelsGUI()
         {
             var descriptors = WheelDescriptor.GetDescriptors(serializedObject).ToArray();
             using (var change = new EditorGUI.ChangeCheckScope())
@@ -124,8 +124,6 @@ namespace UdonSimpleCars
                 }
                 if (change.changed) WheelDescriptor.Apply(serializedObject, descriptors);
             }
-
-            while (property.name.ToLower().Contains("wheel")) property.NextVisible(false);
         }
 
         private static readonly Dictionary<string, string> gameObjectNameTable = new Dictionary<string, string>() {
@@ -150,32 +148,30 @@ namespace UdonSimpleCars
 
             while (property.NextVisible(false))
             {
-                if (property.name == nameof(USC_Car.wheels)) OnWheelsGUI(property);
-                else
+                using (new EditorGUILayout.HorizontalScope())
                 {
-                    using (new EditorGUILayout.HorizontalScope())
+                    EditorGUILayout.PropertyField(property, true);
+
+                    if (gameObjectNameTable.ContainsKey(property.name))
                     {
-                        EditorGUILayout.PropertyField(property, true);
-
-                        if (gameObjectNameTable.ContainsKey(property.name))
+                        var name = gameObjectNameTable[property.name];
+                        if (GUILayout.Button("Find", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
                         {
-                            var name = gameObjectNameTable[property.name];
-                            if (GUILayout.Button("Find", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
-                            {
-                                var gameObject = EditorUtility.CollectDeepHierarchy(serializedObject.targetObjects)
-                                    .Select(o => o as GameObject)
-                                    .FirstOrDefault(o => o && o.name == name);
+                            var gameObject = EditorUtility.CollectDeepHierarchy(serializedObject.targetObjects)
+                                .Select(o => o as GameObject)
+                                .FirstOrDefault(o => o && o.name == name);
 
-                                if (gameObject)
-                                {
-                                    var fieldType = typeof(USC_Car).GetField(property.name, BindingFlags.Instance | BindingFlags.DeclaredOnly)?.FieldType;
-                                    property.objectReferenceValue = fieldType?.IsSubclassOf(typeof(Component)) == true ? (UnityEngine.Object)gameObject.GetComponent(fieldType) : gameObject;
-                                }
+                            if (gameObject)
+                            {
+                                var fieldType = typeof(USC_Car).GetField(property.name, BindingFlags.Instance | BindingFlags.DeclaredOnly)?.FieldType;
+                                property.objectReferenceValue = fieldType?.IsSubclassOf(typeof(Component)) == true ? (UnityEngine.Object)gameObject.GetComponent(fieldType) : gameObject;
                             }
                         }
                     }
                 }
             }
+
+            OnWheelsGUI();
 
             serializedObject.ApplyModifiedProperties();
         }

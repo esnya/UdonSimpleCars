@@ -64,13 +64,13 @@ namespace UdonSimpleCars
         [Tooltip("Bool")] public string localInVehicleParameter = "LocalInVehicle";
 
         [Header("Wheels")]
-        public WheelCollider[] wheels = { };
-        public WheelCollider[] steeredWheels = { };
-        public WheelCollider[] drivingWheels = { };
-        public WheelCollider[] brakeWheels = { };
-        // public WheelCollider[] parkingBrakeWheels = {};
-        public WheelCollider[] detachedWheels = { };
-        public Transform[] wheelVisuals = { };
+        [HideInInspector] public WheelCollider[] wheels = { };
+        [HideInInspector] public WheelCollider[] steeredWheels = { };
+        [HideInInspector] public WheelCollider[] drivingWheels = { };
+        [HideInInspector] public WheelCollider[] brakeWheels = { };
+        // [HideInInspector] public WheelCollider[] parkingBrakeWheels = {};
+        [HideInInspector] public WheelCollider[] detachedWheels = { };
+        [HideInInspector] public Transform[] wheelVisuals = { };
 
         private Animator animator;
         private Rigidbody vehicleRigidbody;
@@ -245,9 +245,7 @@ namespace UdonSimpleCars
                 if (visual != null)
                 {
                     var wheelVisual = wheelVisuals[i];
-                    Vector3 wheelPosition;
-                    Quaternion wheelRotation;
-                    wheel.GetWorldPose(out wheelPosition, out wheelRotation);
+                    wheel.GetWorldPose(out var wheelPosition, out var wheelRotation);
                     wheelVisualPositionOffsets[i] = transform.InverseTransformVector(wheelVisual.position - wheelPosition);
                     wheelVisualLocalRotations[i] = visual.localRotation;
                     wheelVisualAxiesRight[i] = visual.InverseTransformDirection(Vector3.Project(vehicleRight, wheelTransform.right).normalized);
@@ -350,9 +348,7 @@ namespace UdonSimpleCars
                 var wheel = wheels[i];
                 var wheelTransform = wheel.transform;
 
-                Vector3 position;
-                Quaternion rotation;
-                wheel.GetWorldPose(out position, out rotation);
+                wheel.GetWorldPose(out Vector3 position, out Quaternion rotation);
                 visual.position = wheelTransform.TransformPoint(wheelTransform.InverseTransformPoint(position) + wheelVisualPositionOffsets[i]);
 
                 var wheelAngle = wheelAngles[i] + (LocalIsDriver ? wheel.rpm : wheelSpeed * wheel.radius) * Time.deltaTime * (360.0f / 60.0f);
