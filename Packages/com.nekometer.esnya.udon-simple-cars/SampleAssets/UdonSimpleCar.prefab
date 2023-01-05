@@ -1828,6 +1828,7 @@ MonoBehaviour:
   driverOnly: {fileID: 0}
   backGearOnly: {fileID: 0}
   brakingOnly: {fileID: 0}
+  detachedObjects: {fileID: 5922224045240569780}
   steeringAxis: Oculus_CrossPlatform_SecondaryThumbstickHorizontal
   accelerationAxis: Oculus_CrossPlatform_SecondaryIndexTrigger
   brakeAxis: Oculus_CrossPlatform_PrimaryIndexTrigger
@@ -1865,7 +1866,6 @@ MonoBehaviour:
   - {fileID: 1420057614376635196}
   - {fileID: 8993017410393449214}
   - {fileID: 1617394801386329186}
-  detachedObjects: {fileID: 5922224045240569780}
 --- !u!114 &8311205895600088590
 MonoBehaviour:
   m_ObjectHideFlags: 0
