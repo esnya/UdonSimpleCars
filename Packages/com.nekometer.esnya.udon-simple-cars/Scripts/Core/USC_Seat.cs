@@ -21,8 +21,6 @@ namespace UdonSimpleCars
         private VRCStation station;
         private USC_RecoveryStation recoveryStation;
 
-
-
         public GameObject ThisSeatOnly;
         public bool AdjustSeat = true;
         public Transform TargetEyePosition;
@@ -62,7 +60,7 @@ namespace UdonSimpleCars
 
         private void Update()
         {
-            if (Input.GetKey(getOutKey) || !getOutByJump && Input.GetButton(getOutButton))
+            if ((Input.GetKey(getOutKey) || !getOutByJump && Input.GetButton(getOutButton)) && InSeat)
             {
                 station.ExitStation(localPlayer);
             }
