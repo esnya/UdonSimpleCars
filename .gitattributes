@@ -1,0 +1,1 @@
+*.prefab filter=usharp-prefab diff=usharp-prefab merge=unityyamlmerge eol=lf text
