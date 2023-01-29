@@ -68,6 +68,11 @@ namespace UdonSimpleCars
 
         public override void Interact()
         {
+            _Enter();
+        }
+
+        public void _Enter()
+        {
             if (!localPlayer.IsOwner(obj: gameObject))
             { Networking.SetOwner(localPlayer, gameObject); }
             Seat.rotation = Quaternion.Euler(0, Seat.eulerAngles.y, 0);//fixes offset seated position when getting in a rolled/pitched vehicle in VR
