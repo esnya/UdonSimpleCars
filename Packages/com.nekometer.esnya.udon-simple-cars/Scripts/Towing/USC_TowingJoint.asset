@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: USC_TowingJoint
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 23b8cc5c68df88041820d5e703c87439,
-    type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 6cb96284d79f2e5429a10321a4ce4fa5, type: 3}
@@ -23,7 +21,6 @@ MonoBehaviour:
   hasInteractEvent: 1
   scriptID: -201457887646300806
   serializationData:
-    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
