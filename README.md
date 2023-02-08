@@ -5,13 +5,12 @@ Just a simple driver of WheelCollider(s). But synced and configurable without co
 
 See `Assets/UdonSimpleCars/SampleAssets/UdonSimpleCar.prebab` to usage.
 
-## Requirements
-** USE RELEASE LATEST VERSIONS **
-- VRCHAT SDK3 WORLD
-- [UdonSharp](https://github.com/MerlinVR/UdonSharp)
-- [UdonToolkit](https://github.com/orels1/UdonToolkit)
-
-With [WorldCreatorAssistant](https://github.com/Varneon/WorldCreatorAssistant), you can install everything easily!
+## Getting Started
+1. Create a Unity Project for VRChat World with UdonSharp using VRChat Creator Compoanion
+2. Open the Unity Project.
+3. Open the Package Manager window from Window menu.
+4. Click + button and select `Add package from git URL`.
+5. Enter `git+https://github.com/esnya/UdonSimpleCars.git?pth=/Packages/com.nekometer.esnya.udon-simple-cars` and click Add button (Enter `git+https://github.com/esnya/UdonSimpleCars.git?pth=/Packages/com.nekometer.esnya.udon-simple-carss#beta` to use beta releases)
 
 ## Licenses of Sample Assets
 ### [Engine-loop heavy vehicle/tank](https://opengameart.org/content/engine-loop-heavy-vehicletank)
