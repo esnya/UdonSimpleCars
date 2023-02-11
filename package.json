@@ -1,7 +1,7 @@
 {
   "name": "com.nekometer.esnya.udon-simple-cars-packages",
   "displayName": "Udon Simple Cars",
-  "version": "3.0.0-beta.1",
+  "version": "3.0.0",
   "private": true,
   "description": "Just a simple driver of WheelCollider(s) for VRChat Udon worlds. But synced and configurable without codes.",
   "homepage": "https://github.com/esnya/UdonSimpleCars#readme",
