@@ -1,9 +1,5 @@
 plugins:
   - semantic-release-gitmoji
-  - - '@semantic-release/exec'
-    - verifyReleaseCmd: ./.github/scripts/before-release.sh ${nextRelease.version}
-  - - '@semantic-release/github'
-    - assets:
-      - path: dist/
   - "@semantic-release/npm"
+  - "@semantic-release/github"
   - "@semantic-release/git"
