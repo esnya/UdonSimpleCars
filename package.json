@@ -1,5 +1,5 @@
 {
-  "name": "com.nekometer.esnya.udon-simple-cars-packages",
+  "name": "udon-simple-cars-packages",
   "displayName": "Udon Simple Cars",
   "version": "4.0.0-alpha.1",
   "private": true,
@@ -16,18 +16,16 @@
   "author": {
     "name": "esnya"
   },
-  "workspaces": [
-    "Packages/*"
-  ],
   "scripts": {
-    "publish": "npm publish -ws",
-    "version": "npm version -ws ${npm_package_version}"
+    "postversion": "foreach Packages/*/ \"npm --prefix #{path} version ${npm_package_version}\""
   },
   "devDependencies": {
+    "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^8.0.4",
-    "@semantic-release/npm": "^9.0.1",
-    "semantic-release": "^20.1.0",
-    "semantic-release-gitmoji": "^1.4.5"
+    "@semantic-release/github": "^8.0.7",
+    "@semantic-release/npm": "^9.0.2",
+    "foreach-cli": "^1.8.1",
+    "semantic-release": "^19.0.5",
+    "semantic-release-gitmoji": "^1.6.3"
   }
 }
