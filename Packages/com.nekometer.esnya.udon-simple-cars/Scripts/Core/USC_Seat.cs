@@ -1,6 +1,8 @@
 ﻿
 using UdonSharp;
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
 using UdonToolkit;
+#endif
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon.Common;
@@ -14,7 +16,10 @@ namespace UdonSimpleCars
     public class USC_Seat : UdonSharpBehaviour
     {
         public bool getOutByJump = true;
-        [HideIf("@getOutByJump")][Popup("GetButtonList")] public string getOutButton = "Oculus_CrossPlatform_Button4";
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
+        [HideIf("@getOutByJump")][Popup("GetButtonList")]
+#endif
+        public string getOutButton = "Oculus_CrossPlatform_Button4";
         public KeyCode getOutKey = KeyCode.Return;
         public bool isDriver = true;
         private USC_Car car;
