@@ -475,23 +475,6 @@ namespace UdonSimpleCars
         {
             GetComponent<VRCObjectSync>().AllowCollisionOwnershipTransfer = false;
         }
-
-        private string[] GetAxisList() => new[] {
-            "Oculus_CrossPlatform_PrimaryIndexTrigger",
-            "Oculus_CrossPlatform_SecondaryIndexTrigger",
-            "Oculus_CrossPlatform_PrimaryHandTrigger",
-            "Oculus_CrossPlatform_SecondaryHandTrigger",
-            "Horizontal",
-            "Oculus_CrossPlatform_SecondaryThumbstickHorizontal",
-            "Vertical",
-            "Oculus_CrossPlatform_SecondaryThumbstickVertical",
-        };
-        private string[] GetButtonList() => new[] {
-            "Oculus_CrossPlatform_PrimaryThumbstick",
-            "Oculus_CrossPlatform_SecondaryThumbstick",
-            "Oculus_CrossPlatform_Button4",
-            "Oculus_CrossPlatform_Button2",
-        };
 #endif
     }
 }

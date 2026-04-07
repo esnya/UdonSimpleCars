@@ -16,8 +16,8 @@
     "Assets\\UdonSimpleCars": ""
   },
   "vpmDependencies": {
-    "com.vrchat.worlds": ">=3.4.0",
-    "com.vrchat.udonsharp": ">=1.1.0"
+    "com.vrchat.worlds": ">=3.4.0 <4.0.0",
+    "com.vrchat.udonsharp": ">=1.1.0 <2.0.0"
   },
   "license": "MIT",
   "author": {

@@ -190,14 +190,5 @@ namespace UdonSimpleCars
                 station.ExitStation(localPlayer);
             }
         }
-
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-        private string[] GetButtonList() => new[] {
-            "Oculus_CrossPlatform_PrimaryThumbstick",
-            "Oculus_CrossPlatform_SecondaryThumbstick",
-            "Oculus_CrossPlatform_Button4",
-            "Oculus_CrossPlatform_Button2",
-        };
-#endif
     }
 }
