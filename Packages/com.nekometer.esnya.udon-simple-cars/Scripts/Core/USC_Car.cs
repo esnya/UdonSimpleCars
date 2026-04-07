@@ -380,6 +380,23 @@ namespace UdonSimpleCars
                 {
                     foreach (var sync in detachedObjecySyncs) Networking.SetOwner(player, sync.gameObject);
                 }
+
+                // If the car was operating but we are not the driver, the previous driver
+                // must have disconnected without exiting the seat. Reset to a safe state so
+                // the car can be driven or respawned again.
+                // Use the backing field directly to apply the wheel-physics resets without
+                // triggering the driverOnly/animator side effects of the LocalIsDriver setter.
+                if (IsOperating && !LocalIsDriver)
+                {
+                    _localIsDriver = true;
+                    AccelerationValue = 0;
+                    BrakeValue = 1.0f;
+                    SteeringValue = 0;
+                    Gear = GEAR_DRIVE;
+                    _localIsDriver = false;
+                    IsOperating = false;
+                    SetDetachedWheelsMotorTorque(0);
+                }
             }
         }
 
