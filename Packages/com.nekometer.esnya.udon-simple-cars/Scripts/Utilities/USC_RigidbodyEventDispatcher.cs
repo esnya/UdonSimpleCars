@@ -1,6 +1,5 @@
 using System;
 using UdonSharp;
-using UdonToolkit;
 using UnityEngine;
 using VRC.SDKBase;
 
@@ -31,9 +30,9 @@ namespace UdonSimpleCars
         public const int EVENT_TYPE_ON_PLAYER_COLLISION_ENTER = 6;
         public const int EVENT_TYPE_ON_PLAYER_COLLISION_EXIT = 7;
 
-        [ListView("Event Targets")] public UdonSharpBehaviour[] eventTargets = { };
-        [ListView("Event Targets")][Popup("GetEventTypes")] public int[] eventTypes = { };
-        [ListView("Event Targets")][Popup("behaviour", "@eventTargets")] public string[] eventNames = { };
+        public UdonSharpBehaviour[] eventTargets = { };
+        public int[] eventTypes = { };
+        public string[] eventNames = { };
 
         // private int[] eventTypes;
         private bool[] hasEvents;

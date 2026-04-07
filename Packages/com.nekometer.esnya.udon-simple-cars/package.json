@@ -15,16 +15,15 @@
   "legacyFolders": {
     "Assets\\UdonSimpleCars": ""
   },
-  "gitDependencies": {
-    "com.vrchat.udonsharp": "https://github.com/vrchat-community/UdonSharp.git?path=/Packages/com.vrchat.UdonSharp#1.0.1",
-    "com.vrchat.worlds": "https://github.com/vrchat/packages.git?path=/packages/com.vrchat.worlds#3.0.4",
-    "sh.orels.udontoolkit": "https://github.com/orels1/UdonToolkit#develop"
+  "vpmDependencies": {
+    "com.vrchat.worlds": ">=3.4.0",
+    "com.vrchat.udonsharp": ">=1.1.0"
   },
   "license": "MIT",
   "author": {
     "name": "esnya",
     "url": "https://github.com/esnya"
   },
-  "unity": "2019.4",
+  "unity": "2022.3",
   "url": "https://github.com/esnya/UdonSimpleCars.git?path=/Packages/com.nekometer.esnya.udon-simple-cars"
 }

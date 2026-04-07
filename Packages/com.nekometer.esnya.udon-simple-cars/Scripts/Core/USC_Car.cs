@@ -1,11 +1,9 @@
 #pragma warning disable IDE1006
 
 using UdonSharp;
-using UdonToolkit;
 using UnityEngine;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
-using System.Threading;
 using VRC.Udon.Common.Interfaces;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
@@ -41,10 +39,10 @@ namespace UdonSimpleCars
         [Tooltip("Reparented under parent of the vehicle on Start. Resets positions on respawns.")] public Transform detachedObjects;
 
         [Header("VR Inputs")]
-        [Popup("GetAxisList")] public string steeringAxis = "Oculus_CrossPlatform_SecondaryThumbstickHorizontal";
-        [Popup("GetAxisList")] public string accelerationAxis = "Oculus_CrossPlatform_SecondaryIndexTrigger";
-        [Popup("GetAxisList")] public string brakeAxis = "Oculus_CrossPlatform_PrimaryIndexTrigger";
-        [Popup("GetAxisList")] public string backGearAxis = "Vertical";
+        public string steeringAxis = "Oculus_CrossPlatform_SecondaryThumbstickHorizontal";
+        public string accelerationAxis = "Oculus_CrossPlatform_SecondaryIndexTrigger";
+        public string brakeAxis = "Oculus_CrossPlatform_PrimaryIndexTrigger";
+        public string backGearAxis = "Vertical";
 
         [Header("Keyboard Inputs")]
         public KeyCode steeringKeyLeft = KeyCode.A;
