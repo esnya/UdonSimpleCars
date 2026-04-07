@@ -1,6 +1,9 @@
 #pragma warning disable IDE1006
 
 using UdonSharp;
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
+using UdonToolkit;
+#endif
 using UnityEngine;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
@@ -39,9 +42,21 @@ namespace UdonSimpleCars
         [Tooltip("Reparented under parent of the vehicle on Start. Resets positions on respawns.")] public Transform detachedObjects;
 
         [Header("VR Inputs")]
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
+        [Popup("GetAxisList")]
+#endif
         public string steeringAxis = "Oculus_CrossPlatform_SecondaryThumbstickHorizontal";
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
+        [Popup("GetAxisList")]
+#endif
         public string accelerationAxis = "Oculus_CrossPlatform_SecondaryIndexTrigger";
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
+        [Popup("GetAxisList")]
+#endif
         public string brakeAxis = "Oculus_CrossPlatform_PrimaryIndexTrigger";
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
+        [Popup("GetAxisList")]
+#endif
         public string backGearAxis = "Vertical";
 
         [Header("Keyboard Inputs")]
