@@ -10,7 +10,7 @@ See `Assets/UdonSimpleCars/SampleAssets/UdonSimpleCar.prebab` to usage.
 2. Open the Unity Project.
 3. Open the Package Manager window from Window menu.
 4. Click + button and select `Add package from git URL`.
-5. Enter `git+https://github.com/esnya/UdonSimpleCars.git?pth=/Packages/com.nekometer.esnya.udon-simple-cars` and click Add button (Enter `git+https://github.com/esnya/UdonSimpleCars.git?pth=/Packages/com.nekometer.esnya.udon-simple-carss#beta` to use beta releases)
+5. Enter `https://github.com/esnya/UdonSimpleCars.git?path=/Packages/com.nekometer.esnya.udon-simple-cars` and click Add button (Enter `https://github.com/esnya/UdonSimpleCars.git?path=/Packages/com.nekometer.esnya.udon-simple-cars#beta` to use beta releases)
 
 ## Licenses of Sample Assets
 ### [Engine-loop heavy vehicle/tank](https://opengameart.org/content/engine-loop-heavy-vehicletank)
