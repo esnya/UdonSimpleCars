@@ -92,8 +92,6 @@ namespace UdonSimpleCars
         private SphereCollider trigger;
         private Vector3 prevPosition;
         private Vector3 prevVelocity;
-        private readonly float prevSpeed;
-        private readonly bool prevStartMoving;
         private Vector3 prevJointPosition;
         private Vector3 prevAnchorPosition;
 
