@@ -287,6 +287,12 @@ namespace UdonSimpleCars
             }
 
             if (centerOfMass) vehicleRigidbody.centerOfMass = transform.InverseTransformPoint(centerOfMass.position);
+
+            // Ensure collision-based ownership transfer is always disabled at runtime so that
+            // the disconnected-driver recovery in OnOwnershipTransferred is only triggered by
+            // intentional network ownership changes (e.g. a new driver entering the seat).
+            var objectSync = (VRCObjectSync)GetComponent(typeof(VRCObjectSync));
+            objectSync.AllowCollisionOwnershipTransfer = false;
         }
 
         private void Update()
@@ -370,14 +376,16 @@ namespace UdonSimpleCars
                 // If the car was operating but we are not the driver, the previous driver
                 // must have disconnected without exiting the seat. Reset to a safe state so
                 // the car can be driven or respawned again.
+                // Use the backing field directly to apply the wheel-physics resets without
+                // triggering the driverOnly/animator side effects of the LocalIsDriver setter.
                 if (IsOperating && !LocalIsDriver)
                 {
-                    LocalIsDriver = true;
+                    _localIsDriver = true;
                     AccelerationValue = 0;
                     BrakeValue = 1.0f;
                     SteeringValue = 0;
                     Gear = GEAR_DRIVE;
-                    LocalIsDriver = false;
+                    _localIsDriver = false;
                     IsOperating = false;
                     SetDetachedWheelsMotorTorque(0);
                 }
