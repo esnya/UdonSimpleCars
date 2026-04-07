@@ -5,7 +5,6 @@ using UdonToolkit;
 using UnityEngine;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
-using System.Threading;
 using VRC.Udon.Common.Interfaces;
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
