@@ -38,7 +38,7 @@ namespace UdonSimpleCars
         private bool[] hasEvents;
         private int validEventCount;
 
-        private void Awake()
+        private void Start()
         {
             // eventTypes = new int[eventTypeNames.Length];
             // for (var i = 0; i < eventTypes.Length; i++)
@@ -61,7 +61,7 @@ namespace UdonSimpleCars
 
         private void DispatchEvent(int eventType)
         {
-            if (!hasEvents[eventType])
+            if (hasEvents == null || !hasEvents[eventType])
             {
                 return;
             }
