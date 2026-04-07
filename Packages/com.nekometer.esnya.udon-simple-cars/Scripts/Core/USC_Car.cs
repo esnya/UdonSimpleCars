@@ -287,12 +287,6 @@ namespace UdonSimpleCars
             }
 
             if (centerOfMass) vehicleRigidbody.centerOfMass = transform.InverseTransformPoint(centerOfMass.position);
-
-            // Ensure collision-based ownership transfer is always disabled at runtime so that
-            // the disconnected-driver recovery in OnOwnershipTransferred is only triggered by
-            // intentional network ownership changes (e.g. a new driver entering the seat).
-            var objectSync = (VRCObjectSync)GetComponent(typeof(VRCObjectSync));
-            objectSync.AllowCollisionOwnershipTransfer = false;
         }
 
         private void Update()
