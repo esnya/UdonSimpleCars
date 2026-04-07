@@ -1,6 +1,6 @@
 ﻿
 using UdonSharp;
-#if UDON_TOOLKIT
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
 using UdonToolkit;
 #endif
 using UnityEngine;
@@ -16,7 +16,7 @@ namespace UdonSimpleCars
     public class USC_Seat : UdonSharpBehaviour
     {
         public bool getOutByJump = true;
-#if UDON_TOOLKIT
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
         [HideIf("@getOutByJump")][Popup("GetButtonList")]
 #endif
         public string getOutButton = "Oculus_CrossPlatform_Button4";

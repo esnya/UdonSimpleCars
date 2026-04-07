@@ -1,6 +1,6 @@
 using System;
 using UdonSharp;
-#if UDON_TOOLKIT
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
 using UdonToolkit;
 #endif
 using UnityEngine;
@@ -33,15 +33,15 @@ namespace UdonSimpleCars
         public const int EVENT_TYPE_ON_PLAYER_COLLISION_ENTER = 6;
         public const int EVENT_TYPE_ON_PLAYER_COLLISION_EXIT = 7;
 
-#if UDON_TOOLKIT
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
         [ListView("Event Targets")]
 #endif
         public UdonSharpBehaviour[] eventTargets = { };
-#if UDON_TOOLKIT
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
         [ListView("Event Targets")][Popup("GetEventTypes")]
 #endif
         public int[] eventTypes = { };
-#if UDON_TOOLKIT
+#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
         [ListView("Event Targets")][Popup("behaviour", "@eventTargets")]
 #endif
         public string[] eventNames = { };
