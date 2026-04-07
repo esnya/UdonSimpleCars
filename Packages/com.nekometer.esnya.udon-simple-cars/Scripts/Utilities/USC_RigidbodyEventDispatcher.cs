@@ -1,8 +1,5 @@
 using System;
 using UdonSharp;
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-using UdonToolkit;
-#endif
 using UnityEngine;
 using VRC.SDKBase;
 
@@ -33,21 +30,13 @@ namespace UdonSimpleCars
         public const int EVENT_TYPE_ON_PLAYER_COLLISION_ENTER = 6;
         public const int EVENT_TYPE_ON_PLAYER_COLLISION_EXIT = 7;
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-        [ListView("Event Targets")]
-#endif
         public UdonSharpBehaviour[] eventTargets = { };
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-        [ListView("Event Targets")][Popup("GetEventTypes")]
-#endif
         public int[] eventTypes = { };
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-        [ListView("Event Targets")][Popup("behaviour", "@eventTargets")]
-#endif
         public string[] eventNames = { };
 
         // private int[] eventTypes;
         private bool[] hasEvents;
+        private int validEventCount;
 
         private void Start()
         {
@@ -56,6 +45,12 @@ namespace UdonSimpleCars
             // {
             //     eventTypes[i] = Array.IndexOf(GetEventTypes(), eventTypeNames[i]);
             // }
+
+            validEventCount = Math.Min(Math.Min(eventTargets.Length, eventTypes.Length), eventNames.Length);
+            if (eventTargets.Length != eventTypes.Length || eventTargets.Length != eventNames.Length)
+            {
+                Debug.LogError($"[USC_RigidbodyEventDispatcher] eventTargets ({eventTargets.Length}), eventTypes ({eventTypes.Length}), and eventNames ({eventNames.Length}) must have the same length. Only the first {validEventCount} entries will be used.");
+            }
 
             hasEvents = new bool[GetEventTypes().Length];
             for (var i = 0; i < hasEvents.Length; i++)
@@ -66,13 +61,12 @@ namespace UdonSimpleCars
 
         private void DispatchEvent(int eventType)
         {
-            if (!hasEvents[eventType])
+            if (hasEvents == null || !hasEvents[eventType])
             {
                 return;
             }
 
-            int eventTargetCount = eventTargets.Length;
-            for (int i = 0; i < eventTargetCount; i++)
+            for (int i = 0; i < validEventCount; i++)
             {
                 if (eventTypes[i] != eventType)
                 {

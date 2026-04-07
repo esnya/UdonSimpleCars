@@ -1,9 +1,6 @@
 #pragma warning disable IDE1006
 
 using UdonSharp;
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-using UdonToolkit;
-#endif
 using UnityEngine;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
@@ -42,21 +39,9 @@ namespace UdonSimpleCars
         [Tooltip("Reparented under parent of the vehicle on Start. Resets positions on respawns.")] public Transform detachedObjects;
 
         [Header("VR Inputs")]
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-        [Popup("GetAxisList")]
-#endif
         public string steeringAxis = "Oculus_CrossPlatform_SecondaryThumbstickHorizontal";
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-        [Popup("GetAxisList")]
-#endif
         public string accelerationAxis = "Oculus_CrossPlatform_SecondaryIndexTrigger";
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-        [Popup("GetAxisList")]
-#endif
         public string brakeAxis = "Oculus_CrossPlatform_PrimaryIndexTrigger";
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-        [Popup("GetAxisList")]
-#endif
         public string backGearAxis = "Vertical";
 
         [Header("Keyboard Inputs")]
@@ -507,23 +492,6 @@ namespace UdonSimpleCars
         {
             GetComponent<VRCObjectSync>().AllowCollisionOwnershipTransfer = false;
         }
-
-        private string[] GetAxisList() => new[] {
-            "Oculus_CrossPlatform_PrimaryIndexTrigger",
-            "Oculus_CrossPlatform_SecondaryIndexTrigger",
-            "Oculus_CrossPlatform_PrimaryHandTrigger",
-            "Oculus_CrossPlatform_SecondaryHandTrigger",
-            "Horizontal",
-            "Oculus_CrossPlatform_SecondaryThumbstickHorizontal",
-            "Vertical",
-            "Oculus_CrossPlatform_SecondaryThumbstickVertical",
-        };
-        private string[] GetButtonList() => new[] {
-            "Oculus_CrossPlatform_PrimaryThumbstick",
-            "Oculus_CrossPlatform_SecondaryThumbstick",
-            "Oculus_CrossPlatform_Button4",
-            "Oculus_CrossPlatform_Button2",
-        };
 #endif
     }
 }

@@ -1,8 +1,5 @@
 ﻿
 using UdonSharp;
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-using UdonToolkit;
-#endif
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon.Common;
@@ -16,9 +13,6 @@ namespace UdonSimpleCars
     public class USC_Seat : UdonSharpBehaviour
     {
         public bool getOutByJump = true;
-#if !COMPILER_UDONSHARP && UNITY_EDITOR && UDON_TOOLKIT
-        [HideIf("@getOutByJump")][Popup("GetButtonList")]
-#endif
         public string getOutButton = "Oculus_CrossPlatform_Button4";
         public KeyCode getOutKey = KeyCode.Return;
         public bool isDriver = true;
@@ -196,14 +190,5 @@ namespace UdonSimpleCars
                 station.ExitStation(localPlayer);
             }
         }
-
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-        private string[] GetButtonList() => new[] {
-            "Oculus_CrossPlatform_PrimaryThumbstick",
-            "Oculus_CrossPlatform_SecondaryThumbstick",
-            "Oculus_CrossPlatform_Button4",
-            "Oculus_CrossPlatform_Button2",
-        };
-#endif
     }
 }
