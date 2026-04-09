@@ -25,5 +25,8 @@
     "url": "https://github.com/esnya"
   },
   "unity": "2022.3",
-  "url": "https://github.com/esnya/UdonSimpleCars.git?path=/Packages/com.nekometer.esnya.udon-simple-cars"
+  "url": "https://github.com/esnya/UdonSimpleCars.git?path=/Packages/com.nekometer.esnya.udon-simple-cars",
+  "vpmDependencies": {
+    "com.vrchat.worlds": "3.10.2"
+  }
 }

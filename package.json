@@ -4,6 +4,7 @@
   "version": "3.0.0",
   "private": true,
   "description": "Just a simple driver of WheelCollider(s) for VRChat Udon worlds. But synced and configurable without codes.",
+  "unity": "2022.3",
   "homepage": "https://github.com/esnya/UdonSimpleCars#readme",
   "bugs": {
     "url": "https://github.com/esnya/UdonSimpleCars/issues"

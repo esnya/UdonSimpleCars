@@ -12,10 +12,14 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [
-        "UDON"
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.vrchat.worlds",
+            "expression": "3.10.2",
+            "define": "UDONSHARP"
+        }
     ],
-    "versionDefines": [],
     "noEngineReferences": false
 }
