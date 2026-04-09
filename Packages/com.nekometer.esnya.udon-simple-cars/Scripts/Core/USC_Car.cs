@@ -6,11 +6,6 @@ using VRC.SDK3.Components;
 using VRC.SDKBase;
 using VRC.Udon.Common.Interfaces;
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-using UdonSharpEditor;
-using UnityEditor;
-#endif
-
 namespace UdonSimpleCars
 {
     [RequireComponent(typeof(Rigidbody))]
@@ -366,11 +361,8 @@ namespace UdonSimpleCars
                     foreach (var sync in detachedObjecySyncs) Networking.SetOwner(player, sync.gameObject);
                 }
 
-                // If the car was operating but we are not the driver, the previous driver
-                // must have disconnected without exiting the seat. Reset to a safe state so
-                // the car can be driven or respawned again.
-                // Use the backing field directly to apply the wheel-physics resets without
-                // triggering the driverOnly/animator side effects of the LocalIsDriver setter.
+                // Recover from the previous driver disconnecting while the car was still operating.
+                // Use the backing field so the wheel-state reset does not trigger LocalIsDriver side effects.
                 if (IsOperating && !LocalIsDriver)
                 {
                     _localIsDriver = true;

@@ -1,13 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using UdonSharp;
 using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace UdonSimpleCars
 {
@@ -24,22 +19,6 @@ namespace UdonSimpleCars
             public bool detached;
             public Transform visual;
 
-            private static IEnumerable<T> EnumrateArrayProperty<T>(SerializedProperty arrayProperty) where T : Object
-            {
-                return Enumerable.Range(0, arrayProperty.arraySize).Select(i => arrayProperty.GetArrayElementAtIndex(i).objectReferenceValue as T);
-            }
-
-            private static void AssignArrayProperty<T>(SerializedProperty arrayProperty, IEnumerable<T> values) where T : Object
-            {
-                var valueArray = values.ToArray();
-                arrayProperty.arraySize = valueArray.Length;
-
-                foreach (var i in Enumerable.Range(0, valueArray.Length))
-                {
-                    arrayProperty.GetArrayElementAtIndex(i).objectReferenceValue = valueArray[i];
-                }
-            }
-
             public static IEnumerable<WheelDescriptor> GetDescriptors(SerializedObject serializedCarObject)
             {
                 var car = serializedCarObject.targetObject as Component;
@@ -51,12 +30,12 @@ namespace UdonSimpleCars
                 var brakeWheelsProperty = serializedCarObject.FindProperty(nameof(USC_Car.brakeWheels));
                 var wheelVisualsProperty = serializedCarObject.FindProperty(nameof(USC_Car.wheelVisuals));
 
-                var wheels = EnumrateArrayProperty<WheelCollider>(wheelsProperty).ToList();
-                var detachedWheels = EnumrateArrayProperty<WheelCollider>(detachedWheelsProperty);
-                var steeredWheels = EnumrateArrayProperty<WheelCollider>(steeredWheelsProperty);
-                var drivingWheels = EnumrateArrayProperty<WheelCollider>(drivingWheelsProperty);
-                var brakeWheels = EnumrateArrayProperty<WheelCollider>(brakeWheelsProperty);
-                var wheelVisuals = EnumrateArrayProperty<Transform>(wheelVisualsProperty).ToArray();
+                var wheels = USC_EditorUtilities.EnumerateObjectArrayProperty<WheelCollider>(wheelsProperty).ToList();
+                var detachedWheels = USC_EditorUtilities.EnumerateObjectArrayProperty<WheelCollider>(detachedWheelsProperty);
+                var steeredWheels = USC_EditorUtilities.EnumerateObjectArrayProperty<WheelCollider>(steeredWheelsProperty);
+                var drivingWheels = USC_EditorUtilities.EnumerateObjectArrayProperty<WheelCollider>(drivingWheelsProperty);
+                var brakeWheels = USC_EditorUtilities.EnumerateObjectArrayProperty<WheelCollider>(brakeWheelsProperty);
+                var wheelVisuals = USC_EditorUtilities.EnumerateObjectArrayProperty<Transform>(wheelVisualsProperty).ToArray();
 
                 return wheels.Concat(detachedWheels).Where(w => w != null).Concat(car.GetComponentsInChildren<WheelCollider>(true)).Distinct().Select(wheelCollider =>
                 {
@@ -97,12 +76,12 @@ namespace UdonSimpleCars
                 var filtered = descriptors.Where(d => !d.ignored).ToArray();
                 var mainWheels = filtered.Where(d => !d.detached).ToArray();
 
-                AssignArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.wheels)), mainWheels.Select(d => d.wheelCollider));
-                AssignArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.wheelVisuals)), mainWheels.Select(d => d.visual));
-                AssignArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.steeredWheels)), mainWheels.Where(d => d.steered).Select(d => d.wheelCollider));
-                AssignArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.drivingWheels)), mainWheels.Where(d => d.driving).Select(d => d.wheelCollider));
-                AssignArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.brakeWheels)), mainWheels.Where(d => d.brake).Select(d => d.wheelCollider));
-                AssignArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.detachedWheels)), filtered.Where(d => d.detached).Select(d => d.wheelCollider));
+                USC_EditorUtilities.AssignObjectArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.wheels)), mainWheels.Select(d => d.wheelCollider));
+                USC_EditorUtilities.AssignObjectArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.wheelVisuals)), mainWheels.Select(d => d.visual));
+                USC_EditorUtilities.AssignObjectArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.steeredWheels)), mainWheels.Where(d => d.steered).Select(d => d.wheelCollider));
+                USC_EditorUtilities.AssignObjectArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.drivingWheels)), mainWheels.Where(d => d.driving).Select(d => d.wheelCollider));
+                USC_EditorUtilities.AssignObjectArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.brakeWheels)), mainWheels.Where(d => d.brake).Select(d => d.wheelCollider));
+                USC_EditorUtilities.AssignObjectArrayProperty(serializedCarObject.FindProperty(nameof(USC_Car.detachedWheels)), filtered.Where(d => d.detached).Select(d => d.wheelCollider));
             }
         }
 
@@ -143,30 +122,26 @@ namespace UdonSimpleCars
 
             serializedObject.Update();
 
-            var property = serializedObject.GetIterator();
-            property.NextVisible(true);
-
-            while (property.NextVisible(false))
+            foreach (var property in USC_EditorUtilities.GetVisibleProperties(serializedObject))
             {
                 using (new EditorGUILayout.HorizontalScope())
                 {
-                    EditorGUILayout.PropertyField(property, true);
+                    if (property.name == nameof(USC_Car.steeringAxis)
+                        || property.name == nameof(USC_Car.accelerationAxis)
+                        || property.name == nameof(USC_Car.brakeAxis)
+                        || property.name == nameof(USC_Car.backGearAxis))
+                    {
+                        USC_EditorUtilities.StringPopupField(property, USC_EditorUtilities.CommonVrAxes);
+                    }
+                    else
+                    {
+                        EditorGUILayout.PropertyField(property, true);
+                    }
 
                     if (gameObjectNameTable.ContainsKey(property.name))
                     {
                         var name = gameObjectNameTable[property.name];
-                        if (GUILayout.Button("Find", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
-                        {
-                            var gameObject = EditorUtility.CollectDeepHierarchy(serializedObject.targetObjects)
-                                .Select(o => o as GameObject)
-                                .FirstOrDefault(o => o && o.name == name);
-
-                            if (gameObject)
-                            {
-                                var fieldType = typeof(USC_Car).GetField(property.name, BindingFlags.Instance | BindingFlags.DeclaredOnly)?.FieldType;
-                                property.objectReferenceValue = fieldType?.IsSubclassOf(typeof(Component)) == true ? (UnityEngine.Object)gameObject.GetComponent(fieldType) : gameObject;
-                            }
-                        }
+                        USC_EditorUtilities.DrawFindByNameButton(serializedObject, property, name, typeof(USC_Car));
                     }
                 }
             }

@@ -1,0 +1,43 @@
+name: Lint
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: reviewdog/action-actionlint@v1
+        with:
+          fail_level: error
+
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+      - name: Validate release config
+        run: ruby -e 'require "yaml"; YAML.load_file(".releaserc.yml")'
+      - name: Validate package manifests
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+          const path = require("path");
+
+          const seen = new Set();
+          const roots = [process.cwd(), path.join(process.cwd(), "Packages")];
+
+          for (const root of roots) {
+            if (!fs.existsSync(root)) continue;
+            for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+              const target = entry.isDirectory() ? path.join(root, entry.name, "package.json") : path.join(root, entry.name);
+              if (!target.endsWith("package.json") || seen.has(target) || !fs.existsSync(target)) continue;
+              JSON.parse(fs.readFileSync(target, "utf8"));
+              seen.add(target);
+            }
+          }
+          NODE
