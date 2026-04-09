@@ -360,6 +360,20 @@ namespace UdonSimpleCars
                 {
                     foreach (var sync in detachedObjecySyncs) Networking.SetOwner(player, sync.gameObject);
                 }
+
+                // Recover from the previous driver disconnecting while the car was still operating.
+                // Use the backing field so the wheel-state reset does not trigger LocalIsDriver side effects.
+                if (IsOperating && !LocalIsDriver)
+                {
+                    _localIsDriver = true;
+                    AccelerationValue = 0;
+                    BrakeValue = 1.0f;
+                    SteeringValue = 0;
+                    Gear = GEAR_DRIVE;
+                    _localIsDriver = false;
+                    IsOperating = false;
+                    SetDetachedWheelsMotorTorque(0);
+                }
             }
         }
 
