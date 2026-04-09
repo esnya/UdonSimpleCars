@@ -1,0 +1,39 @@
+name: Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: reviewdog/action-actionlint@v1
+        with:
+          fail_level: error
+      - name: Run static checks
+        run: bash scripts/run-static-checks.sh
+
+  udonsharp-lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            6.0.x
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+      - name: Run UdonSharp Linter
+        run: dotnet tool run udonsharp-lint Packages
